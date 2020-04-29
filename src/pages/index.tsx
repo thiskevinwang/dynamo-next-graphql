@@ -1,77 +1,70 @@
+import { NextPage, GetServerSideProps } from "next"
 import { request } from "graphql-request"
-import useSWR from "swr"
 import styled from "styled-components"
 
-const SnackCard = styled.div`
+const ProductCard = styled.div`
   padding: 1rem;
   border: 1px dotted lightgrey;
   display: block;
-
-  font-size: 0.8rem;
-
   header {
     font-weight: bold;
   }
-  img {
-    height: 80px;
-    width: 80px;
-    background-color: lightgrey;
-  }
 `
 
-const API = "http://localhost:4000"
-const query = `
-{
-  querySnacks(category: "Sweet") {
+const ENDPOINT = "http://localhost:4000"
+const QUERY_PRODUCTS_BY_NAME = `
+query QueryProductsByName($name: String) {
+  queryProductsByName(name: $name) {
     PK
     SK
-    DisplayName
-    Tastes
-    Textures
-    Rating
-    ImageUrls
+    createdAt
+    updatedAt
   }
 }
 `
 
-interface Snack {
+interface Product {
   PK: string
   SK: string
-  DisplayName: string
-  Tastes: string[]
-  Textures: string[]
-  Rating: number
-  ImageUrls: string[]
+  createdAt?: string
+  updatedAt?: string
 }
 
-export default () => {
-  const { data, error } = useSWR<{ querySnacks: Snack[] }>(query, (query) =>
-    request(API, query)
+const Index: NextPage<SSRProps> = ({ queryProductsByName }) => {
+  return (
+    <>
+      Products
+      {queryProductsByName.map((product, i) => {
+        return (
+          <ProductCard key={`${product.PK}${i}`}>
+            <header>PK: {product.PK}</header>
+            <section>
+              <div>SK: {product.SK}</div>
+              <div>createdAt: {product.createdAt}</div>
+              <div>updatedAt: {product.updatedAt}</div>
+            </section>
+          </ProductCard>
+        )
+      })}
+    </>
   )
-
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
-
-  return data.querySnacks.map((snack, i) => {
-    return (
-      <SnackCard key={`${snack.PK}${i}`}>
-        <header>
-          <h1>{snack.DisplayName}</h1>
-        </header>
-        <img src={snack.ImageUrls?.[0]}></img>
-        <h2>Tastes</h2>
-        <ul>
-          {snack.Tastes?.map((taste) => {
-            return <li key={taste}>{taste}</li>
-          })}
-        </ul>
-        <h2>Textures</h2>
-        <ul>
-          {snack.Textures?.map((texture) => {
-            return <li key={texture}>{texture}</li>
-          })}
-        </ul>
-      </SnackCard>
-    )
-  })
 }
+
+interface SSRProps {
+  queryProductsByName: Product[]
+}
+
+export const getServerSideProps: GetServerSideProps<SSRProps> = async () => {
+  const { queryProductsByName } = await request<SSRProps>(
+    ENDPOINT,
+    QUERY_PRODUCTS_BY_NAME,
+    {
+      name: "Poteko",
+    }
+  )
+  return {
+    props: { queryProductsByName },
+  }
+}
+
+export default Index
