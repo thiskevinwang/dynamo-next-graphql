@@ -40,15 +40,15 @@ const Votes: NextPage<SSRProps> = ({ queryVotesByEmail, userId }) => {
   return (
     <Layout>
       <h1>{userId}'s Votes</h1>
-      {queryVotesByEmail.map((e, i) => {
+      {queryVotesByEmail.map((e) => {
         return (
-          <Card key={`${e.PK}${i}`}>
+          <Card key={`${e.PK}${e.SK}`}>
             <h2>{e.productName}</h2>
             <section>
               {Object.entries(e).map(([key, value]) => {
                 return (
-                  <div>
-                    <code key={key}>
+                  <div key={key}>
+                    <code>
                       {key}: {value}
                     </code>
                   </div>
