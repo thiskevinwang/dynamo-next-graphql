@@ -21,8 +21,8 @@ const Rating = styled.div`
 
 const ENDPOINT = "http://localhost:4000"
 const QUERY_VOTES_BY_PRODUCT = `
-query QueryVotesByProduct($name: String) {
-  queryVotesByProduct(name: $name) {
+query QueryVotesByProduct($productName: String) {
+  queryVotesByProduct(productName: $productName) {
     PK
     SK
     productName
@@ -93,7 +93,7 @@ export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
     ENDPOINT,
     QUERY_VOTES_BY_PRODUCT,
     {
-      name: productId,
+      productName: productId,
     }
   )
   return {

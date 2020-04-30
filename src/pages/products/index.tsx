@@ -26,7 +26,6 @@ query QueryProducts {
     ...Shared
   }
 }
-
 `
 
 interface Product {
@@ -41,15 +40,15 @@ export default (({ queryProducts }) => {
   return (
     <Layout>
       <h1>Products</h1>
-      {queryProducts.map((e, i) => {
+      {queryProducts.map((e) => {
         return (
-          <Card key={`${e.PK}${i}`}>
+          <Card key={`${e.PK}`}>
             <h2>{e.productName}</h2>
             <section>
               {Object.entries(e).map(([key, value]) => {
                 return (
-                  <div>
-                    <code key={key}>
+                  <div key={key}>
+                    <code>
                       {key}: {value}
                     </code>
                   </div>

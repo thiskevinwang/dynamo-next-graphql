@@ -40,15 +40,15 @@ export default (({ queryUsers }) => {
   return (
     <Layout>
       <h1>Users</h1>
-      {queryUsers.map((e, i) => {
+      {queryUsers.map((e) => {
         return (
-          <Card key={`${e.PK}${i}`}>
+          <Card key={`${e.PK}`}>
             <h2>{e.username}</h2>
             <section>
               {Object.entries(e).map(([key, value]) => {
                 return (
-                  <div>
-                    <code key={key}>
+                  <div key={key}>
+                    <code>
                       {key}: {value}
                     </code>
                   </div>
