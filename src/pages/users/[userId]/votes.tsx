@@ -9,20 +9,11 @@ const Card = styled.div`
   border: 1px dotted lightgrey;
   display: block;
 `
-const Rating = styled.div`
-  border-radius: 100%;
-  border: 1px solid black;
-  height: 40px;
-  width: 40px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-`
 
 const ENDPOINT = "http://localhost:4000"
-const QUERY_VOTES_BY_PRODUCT = `
-query QueryVotesByProduct($name: String) {
-  queryVotesByProduct(name: $name) {
+const QUERY_VOTES_BY_EMAIL = `
+query QueryVotesByEmail($email: String) {
+  queryVotesByEmail(email: $email) {
     PK
     SK
     productName
@@ -32,6 +23,7 @@ query QueryVotesByProduct($name: String) {
     rating
   }
 }
+
 `
 
 interface Vote {
@@ -44,23 +36,14 @@ interface Vote {
   rating?: string
 }
 
-const Votes: NextPage<SSRProps> = ({ queryVotesByProduct, productId }) => {
+const Votes: NextPage<SSRProps> = ({ queryVotesByEmail, userId }) => {
   return (
     <Layout>
-      <h1>Votes for {productId}</h1>
-      <h2>Average Rating</h2>
-
-      <Rating>
-        {queryVotesByProduct.reduce(
-          (initial, current) => initial + parseFloat(current.rating as string),
-          0
-        ) / queryVotesByProduct.length}
-      </Rating>
-
-      {queryVotesByProduct.map((e, i) => {
+      <h1>{userId}'s Votes</h1>
+      {queryVotesByEmail.map((e, i) => {
         return (
           <Card key={`${e.PK}${i}`}>
-            <h2>{e.username}</h2>
+            <h2>{e.productName}</h2>
             <section>
               {Object.entries(e).map(([key, value]) => {
                 return (
@@ -80,24 +63,24 @@ const Votes: NextPage<SSRProps> = ({ queryVotesByProduct, productId }) => {
 }
 
 interface SSRProps {
-  queryVotesByProduct: Vote[]
-  productId?: string | string[]
+  queryVotesByEmail: Vote[]
+  userId?: string | string[]
 }
 
 export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
   query,
 }) => {
-  const { productId } = query
+  const { userId } = query
 
-  const { queryVotesByProduct } = await request<SSRProps>(
+  const { queryVotesByEmail } = await request<SSRProps>(
     ENDPOINT,
-    QUERY_VOTES_BY_PRODUCT,
+    QUERY_VOTES_BY_EMAIL,
     {
-      name: productId,
+      email: userId,
     }
   )
   return {
-    props: { queryVotesByProduct, productId },
+    props: { queryVotesByEmail, userId },
   }
 }
 
