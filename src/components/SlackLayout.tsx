@@ -1,12 +1,23 @@
-import * as React from "react"
+import React from "react"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import styled from "styled-components"
 
-export const SlackLayout: React.FC = ({ children }) => {
+interface Props {
+  title?: string
+}
+export const SlackLayout: React.FC<Props> = ({ title, children }) => {
+  const router = useRouter()
   return (
     <Styles>
       <header className="header">
         <ul>
+          <li>
+            <button onClick={router.back}>←</button>
+          </li>
+          <li>
+            <button disabled>→</button>
+          </li>
           <li>
             <Link href={"/"}>
               <a>Home</a>
@@ -33,10 +44,79 @@ export const SlackLayout: React.FC = ({ children }) => {
           </Workspaces>
           <ChannelsContainer>
             <User></User>
-            <ChannelList></ChannelList>
+            <NavList>
+              <ul>
+                <li>
+                  <Link href={"/"}>
+                    <a>All Unreads</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>Threads</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>Mentions & reactions</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>Drafts</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>Saved items</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>People</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>App</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>Files</a>
+                  </Link>
+                </li>
+                <li>
+                  <Link href={"/"}>
+                    <a>Show less</a>
+                  </Link>
+                </li>
+              </ul>
+            </NavList>
+            <ChannelList>
+              <details>
+                <summary>Channels</summary>
+                <ul>
+                  {Array(10)
+                    .fill(null)
+                    .map((_e, i) => {
+                      return (
+                        <li key={i}>
+                          <Link href={"/"}>
+                            <a>Channel {i}</a>
+                          </Link>
+                        </li>
+                      )
+                    })}
+                </ul>
+              </details>
+            </ChannelList>
           </ChannelsContainer>
         </Sidebar>
-        <Content>{children}</Content>
+        <Content>
+          <header>{title}</header>
+          {children}
+        </Content>
       </div>
     </Styles>
   )
@@ -66,7 +146,47 @@ const User = styled.div`
   border-bottom: 1px solid lightgrey;
   height: 64px;
 `
-const ChannelList = styled.div``
+const NavList = styled.div`
+  border-bottom: 1px solid lightgrey;
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    li {
+      padding-left: 1rem;
+      height: 28px;
+      display: flex;
+      align-items: center;
+    }
+  }
+`
+const ChannelList = styled.div`
+  padding-top: 10px;
+  padding-bottom: 10px;
+  summary {
+    padding-left: 1rem;
+  }
+  ul {
+    display: flex;
+    flex-direction: column;
+
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    li {
+      padding-left: 1rem;
+      height: 28px;
+      display: flex;
+      align-items: center;
+    }
+  }
+`
 
 const Styles = styled.div`
   width: 100vw;
@@ -105,6 +225,8 @@ const Styles = styled.div`
 `
 
 const Content = styled.main`
-  padding-left: 1rem;
-  padding-right: 1rem;
+  header {
+    height: 64px;
+    border-bottom: 1px solid lightgrey;
+  }
 `
