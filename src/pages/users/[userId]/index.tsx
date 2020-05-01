@@ -3,7 +3,7 @@ import Link from "next/link"
 import { request } from "graphql-request"
 import styled from "styled-components"
 
-import { Layout } from "components/Layout"
+import { SlackLayout } from "components/SlackLayout"
 
 const Card = styled.div`
   padding: 1rem;
@@ -41,7 +41,7 @@ interface User {
 
 export default (({ getUser: e }) => {
   return (
-    <Layout>
+    <SlackLayout>
       <h1>User</h1>
 
       <Card>
@@ -68,7 +68,7 @@ export default (({ getUser: e }) => {
           </Link>
         </section>
       </Card>
-    </Layout>
+    </SlackLayout>
   )
 }) as NextPage<SSRProps>
 

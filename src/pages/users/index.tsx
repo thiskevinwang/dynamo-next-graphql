@@ -3,7 +3,7 @@ import Link from "next/link"
 import { request } from "graphql-request"
 // import styled from "styled-components"
 
-import { Layout } from "components/Layout"
+import { SlackLayout } from "components/SlackLayout"
 
 const ENDPOINT = "http://localhost:4000"
 const QUERY_USERS = `
@@ -32,7 +32,7 @@ interface User {
 
 export default (({ queryUsers }) => {
   return (
-    <Layout>
+    <SlackLayout>
       <h1>Users</h1>
       <ul>
         {queryUsers.map((e) => {
@@ -45,7 +45,7 @@ export default (({ queryUsers }) => {
           )
         })}
       </ul>
-    </Layout>
+    </SlackLayout>
   )
 }) as NextPage<SSRProps>
 

@@ -3,7 +3,7 @@ import Link from "next/link"
 import { request } from "graphql-request"
 import styled from "styled-components"
 
-import { Layout } from "components/Layout"
+import { SlackLayout } from "components/SlackLayout"
 
 const Card = styled.div`
   padding: 1rem;
@@ -47,7 +47,7 @@ interface Vote {
 
 const Votes: NextPage<SSRProps> = ({ queryVotesByProduct, productId }) => {
   return (
-    <Layout>
+    <SlackLayout>
       <h1>Votes for {productId}</h1>
       <h2>Average Rating</h2>
 
@@ -79,7 +79,7 @@ const Votes: NextPage<SSRProps> = ({ queryVotesByProduct, productId }) => {
           </Card>
         )
       })}
-    </Layout>
+    </SlackLayout>
   )
 }
 
