@@ -274,6 +274,7 @@ const Content = styled.div`
   }
 `
 const Lists = styled.div`
-  height: calc(100vh - (65px + 38px + 2rem));
+  /* content header, layout header */
+  height: calc(100vh - (65px + 38px));
   overflow: scroll;
 `
