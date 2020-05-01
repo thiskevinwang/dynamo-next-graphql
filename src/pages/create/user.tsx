@@ -71,8 +71,7 @@ export default (() => {
   if (!data) return <>Loading</>
 
   return (
-    <SlackLayout>
-      <h1>Create a User</h1>
+    <SlackLayout title={"Create a User"}>
       <input
         value={username}
         onChange={(e) => setUsername(e.target.value)}

@@ -41,9 +41,7 @@ interface User {
 
 export default (({ getUser: e }) => {
   return (
-    <SlackLayout>
-      <h1>User</h1>
-
+    <SlackLayout title={"User"}>
       <Card>
         <h2>
           <Link href={"/users/[userId]/"} as={`/users/${e.username}`}>

@@ -32,8 +32,7 @@ interface Product {
 
 export default (({ queryProducts }) => {
   return (
-    <SlackLayout>
-      <h1>Products</h1>
+    <SlackLayout title={"Products"}>
       <ul>
         {queryProducts.map((e) => {
           return (

@@ -32,8 +32,7 @@ interface User {
 
 export default (({ queryUsers }) => {
   return (
-    <SlackLayout>
-      <h1>Users</h1>
+    <SlackLayout title={"Users"}>
       <ul>
         {queryUsers.map((e) => {
           return (

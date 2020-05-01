@@ -7,8 +7,7 @@ import { SlackLayout } from "components/SlackLayout"
 
 export default (() => {
   return (
-    <SlackLayout>
-      <h1>Home</h1>
+    <SlackLayout title={"Home"}>
       <ul>
         <li>
           <Link href={"/products"}>

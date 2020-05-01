@@ -39,8 +39,7 @@ interface Vote {
 
 const Votes: NextPage<SSRProps> = ({ queryVotesByEmail, userId }) => {
   return (
-    <SlackLayout>
-      <h1>{userId}'s Votes</h1>
+    <SlackLayout title={`${userId}'s Votes`}>
       {queryVotesByEmail.map((e) => {
         return (
           <Card key={`${e.PK}${e.SK}`}>

@@ -47,8 +47,7 @@ interface Vote {
 
 const Votes: NextPage<SSRProps> = ({ queryVotesByProduct, productId }) => {
   return (
-    <SlackLayout>
-      <h1>Votes for {productId}</h1>
+    <SlackLayout title={`Votes for ${productId}`}>
       <h2>Average Rating</h2>
 
       <Rating>

@@ -63,8 +63,7 @@ export default (() => {
   if (error) return <>Error</>
   if (!data) return <>Loading</>
   return (
-    <SlackLayout>
-      <h1>Create a Product</h1>
+    <SlackLayout title={"Create a Product"}>
       <input
         value={productName}
         onChange={(e) => setProductName(e.target.value)}

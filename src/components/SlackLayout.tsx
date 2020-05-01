@@ -1,5 +1,6 @@
 import React from "react"
 import Link from "next/link"
+import Head from "next/head"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 
@@ -114,8 +115,15 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           </ChannelsContainer>
         </Sidebar>
         <Content>
-          <header>{title}</header>
-          {children}
+          <header>
+            <div>
+              <h1>{title}</h1>
+            </div>
+          </header>
+          <Head>
+            <title>{title}</title>
+          </Head>
+          <main>{children}</main>
         </Content>
       </div>
     </Styles>
@@ -224,9 +232,18 @@ const Styles = styled.div`
   }
 `
 
-const Content = styled.main`
+const Content = styled.div`
   header {
+    display: flex;
     height: 64px;
     border-bottom: 1px solid lightgrey;
+    div {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+    }
+  }
+  main {
+    padding: 1rem;
   }
 `

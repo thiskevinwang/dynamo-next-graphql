@@ -38,8 +38,7 @@ interface Product {
 
 export default (({ getProduct: e }) => {
   return (
-    <SlackLayout>
-      <h1>Product</h1>
+    <SlackLayout title={"Product"}>
       <Card>
         <h2>
           <Link
