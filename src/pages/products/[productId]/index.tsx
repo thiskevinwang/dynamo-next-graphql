@@ -52,8 +52,8 @@ export default (({ getProduct: e }) => {
 
         {Object.entries(e).map(([key, value]) => {
           return (
-            <div>
-              <code key={key}>
+            <div key={key}>
+              <code>
                 {key}: {value}
               </code>
             </div>
