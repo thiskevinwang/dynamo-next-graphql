@@ -58,42 +58,66 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
               <NavList>
                 <ul>
                   <li>
-                    <Link href={"/"}>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/all_unreads"}
+                    >
                       <a>All Unreads</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"}>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/threads"}
+                    >
                       <a>Threads</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"}>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/mentions_and_reactions"}
+                    >
                       <a>Mentions & reactions</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"}>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/drafts"}
+                    >
                       <a>Drafts</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"}>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/saved_items"}
+                    >
                       <a>Saved items</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"}>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/people"}
+                    >
                       <a>People</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"}>
-                      <a>App</a>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/apps"}
+                    >
+                      <a>Apps</a>
                     </Link>
                   </li>
                   <li>
-                    <Link href={"/"}>
+                    <Link
+                      href={"/channels/[channel_name]"}
+                      as={"/channels/files"}
+                    >
                       <a>Files</a>
                     </Link>
                   </li>
