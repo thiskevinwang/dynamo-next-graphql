@@ -7,16 +7,16 @@ import { Layout } from "components/Layout"
 export default (() => {
   return (
     <Layout>
-      <h1>Home</h1>
+      <h1>Create</h1>
       <ul>
         <li>
-          <Link href={"/products"}>
-            <a>Products</a>
+          <Link href={"/create/product"}>
+            <a>a Product</a>
           </Link>
         </li>
         <li>
-          <Link href={"/users"}>
-            <a>Users</a>
+          <Link href={"/create/user"}>
+            <a>a User</a>
           </Link>
         </li>
       </ul>
