@@ -12,7 +12,7 @@ const Card = styled.div`
 `
 
 const ENDPOINT = "http://localhost:4000"
-const QUERY_PRODUCTS_BY_NAME = `
+const GET_PRODUCT = `
 fragment Shared on Product {
   PK
   SK
@@ -20,8 +20,9 @@ fragment Shared on Product {
   updatedAt
   productName
 }
-query QueryProductsByName($name: String) {
-  queryProductsByName(name: $name) {
+
+query GetProduct($productName: String!) {
+  getProduct(productName: $productName) {
     ...Shared
   }
 }
@@ -35,55 +36,52 @@ interface Product {
   productName: string
 }
 
-export default (({ queryProductsByName }) => {
+export default (({ getProduct: e }) => {
   return (
     <Layout>
-      <h1>Products By Name</h1>
-      {queryProductsByName.map((e, i) => {
-        return (
-          <Card key={`${e.PK}${i}`}>
-            <h2>
-              <Link
-                href={"/products/[productId]/votes"}
-                as={`/products/${e.PK.replace("PRODUCT#", "")}/votes`}
-              >
-                <a>PK: {e.PK}</a>
-              </Link>
-            </h2>
-            <section>
-              {Object.entries(e).map(([key, value]) => {
-                return (
-                  <div>
-                    <code key={key}>
-                      {key}: {value}
-                    </code>
-                  </div>
-                )
-              })}
-            </section>
-          </Card>
-        )
-      })}
+      <h1>Product</h1>
+      <Card>
+        <h2>
+          <Link
+            href={"/products/[productId]/"}
+            as={`/products/${e.productName}`}
+          >
+            <a>{e.productName}</a>
+          </Link>
+        </h2>
+
+        {Object.entries(e).map(([key, value]) => {
+          return (
+            <div>
+              <code key={key}>
+                {key}: {value}
+              </code>
+            </div>
+          )
+        })}
+        <Link
+          href={"/products/[productId]/votes"}
+          as={`/products/${e.productName}/votes`}
+        >
+          <a>Votes</a>
+        </Link>
+      </Card>
     </Layout>
   )
 }) as NextPage<SSRProps>
 
 interface SSRProps {
-  queryProductsByName: Product[]
+  getProduct: Product
 }
 
 export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
   query,
 }) => {
   const { productId } = query
-  const { queryProductsByName } = await request<SSRProps>(
-    ENDPOINT,
-    QUERY_PRODUCTS_BY_NAME,
-    {
-      name: productId,
-    }
-  )
+  const { getProduct } = await request<SSRProps>(ENDPOINT, GET_PRODUCT, {
+    productName: productId,
+  })
   return {
-    props: { queryProductsByName },
+    props: { getProduct },
   }
 }

@@ -1,4 +1,5 @@
 import { NextPage, GetServerSideProps } from "next"
+import Link from "next/link"
 import { request } from "graphql-request"
 import styled from "styled-components"
 
@@ -60,7 +61,10 @@ const Votes: NextPage<SSRProps> = ({ queryVotesByProduct, productId }) => {
       {queryVotesByProduct.map((e) => {
         return (
           <Card key={`${e.PK}${e.SK}`}>
-            <h2>{e.username}</h2>
+            <Link href={"/users/[userId]"} as={`/users/${e.username}`}>
+              <a>{e.username}</a>
+            </Link>
+
             <section>
               {Object.entries(e).map(([key, value]) => {
                 return (

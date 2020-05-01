@@ -1,15 +1,9 @@
 import { NextPage, GetServerSideProps } from "next"
 import Link from "next/link"
 import { request } from "graphql-request"
-import styled from "styled-components"
+// import styled from "styled-components"
 
 import { Layout } from "components/Layout"
-
-const Card = styled.div`
-  padding: 1rem;
-  border: 1px dotted lightgrey;
-  display: block;
-`
 
 const ENDPOINT = "http://localhost:4000"
 const QUERY_USERS = `
@@ -40,30 +34,17 @@ export default (({ queryUsers }) => {
   return (
     <Layout>
       <h1>Users</h1>
-      {queryUsers.map((e) => {
-        return (
-          <Card key={`${e.PK}`}>
-            <h2>{e.username}</h2>
-            <section>
-              {Object.entries(e).map(([key, value]) => {
-                return (
-                  <div key={key}>
-                    <code>
-                      {key}: {value}
-                    </code>
-                  </div>
-                )
-              })}
-              <Link
-                href={"/users/[userId]/votes"}
-                as={`/users/${e.username}/votes`}
-              >
-                <a>Votes</a>
+      <ul>
+        {queryUsers.map((e) => {
+          return (
+            <li key={`${e.PK}`}>
+              <Link href={"/users/[userId]"} as={`/users/${e.username}`}>
+                <a>{e.username}</a>
               </Link>
-            </section>
-          </Card>
-        )
-      })}
+            </li>
+          )
+        })}
+      </ul>
     </Layout>
   )
 }) as NextPage<SSRProps>

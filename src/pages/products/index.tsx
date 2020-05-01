@@ -1,15 +1,9 @@
 import { NextPage, GetServerSideProps } from "next"
 import Link from "next/link"
 import { request } from "graphql-request"
-import styled from "styled-components"
+// import styled from "styled-components"
 
 import { Layout } from "components/Layout"
-
-const Card = styled.div`
-  padding: 1rem;
-  border: 1px dotted lightgrey;
-  display: block;
-`
 
 const ENDPOINT = "http://localhost:4000"
 const QUERY_PRODUCTS = `
@@ -40,30 +34,20 @@ export default (({ queryProducts }) => {
   return (
     <Layout>
       <h1>Products</h1>
-      {queryProducts.map((e) => {
-        return (
-          <Card key={`${e.PK}`}>
-            <h2>{e.productName}</h2>
-            <section>
-              {Object.entries(e).map(([key, value]) => {
-                return (
-                  <div key={key}>
-                    <code>
-                      {key}: {value}
-                    </code>
-                  </div>
-                )
-              })}
+      <ul>
+        {queryProducts.map((e) => {
+          return (
+            <li key={`${e.PK}`}>
               <Link
-                href={"/products/[productId]/votes"}
-                as={`/products/${e.productName}/votes`}
+                href={"/products/[productId]"}
+                as={`/products/${e.productName}`}
               >
-                <a>Votes</a>
+                <a>{e.productName}</a>
               </Link>
-            </section>
-          </Card>
-        )
-      })}
+            </li>
+          )
+        })}
+      </ul>
     </Layout>
   )
 }) as NextPage<SSRProps>
