@@ -35,83 +35,94 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
         <Sidebar>
           <Workspaces>
             <ul>
-              <li>😀</li>
-              <li>😊</li>
-              <li>😇</li>
-              <li>🤨</li>
-              <li>😫</li>
-              <li>🥱</li>
+              <li>
+                <WorkspaceIcon>&nbsp;😀</WorkspaceIcon>
+              </li>
+              <li>
+                <WorkspaceIcon>&nbsp;😊</WorkspaceIcon>
+              </li>
+              <li>
+                <WorkspaceIcon>&nbsp;😇</WorkspaceIcon>
+              </li>
+              <li>
+                <WorkspaceIcon>&nbsp;🤨</WorkspaceIcon>
+              </li>
+              <li>
+                <WorkspaceIcon>&nbsp;🥱</WorkspaceIcon>
+              </li>
             </ul>
           </Workspaces>
           <ChannelsContainer>
             <User></User>
-            <NavList>
-              <ul>
-                <li>
-                  <Link href={"/"}>
-                    <a>All Unreads</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>Threads</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>Mentions & reactions</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>Drafts</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>Saved items</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>People</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>App</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>Files</a>
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/"}>
-                    <a>Show less</a>
-                  </Link>
-                </li>
-              </ul>
-            </NavList>
-            <ChannelList>
-              <details>
-                <summary>Channels</summary>
+            <Lists>
+              <NavList>
                 <ul>
-                  {Array(10)
-                    .fill(null)
-                    .map((_e, i) => {
-                      return (
-                        <li key={i}>
-                          <Link href={"/"}>
-                            <a>Channel {i}</a>
-                          </Link>
-                        </li>
-                      )
-                    })}
+                  <li>
+                    <Link href={"/"}>
+                      <a>All Unreads</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>Threads</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>Mentions & reactions</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>Drafts</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>Saved items</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>People</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>App</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>Files</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={"/"}>
+                      <a>Show less</a>
+                    </Link>
+                  </li>
                 </ul>
-              </details>
-            </ChannelList>
+              </NavList>
+              <ChannelList>
+                <details>
+                  <summary>Channels</summary>
+                  <ul>
+                    {Array(30)
+                      .fill(null)
+                      .map((_e, i) => {
+                        return (
+                          <li key={i}>
+                            <Link href={"/"}>
+                              <a>Channel {i}</a>
+                            </Link>
+                          </li>
+                        )
+                      })}
+                  </ul>
+                </details>
+              </ChannelList>
+            </Lists>
           </ChannelsContainer>
         </Sidebar>
         <Content>
@@ -131,7 +142,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
 }
 const Sidebar = styled.div`
   display: grid;
-  grid-template-columns: 38px auto;
+  grid-template-columns: 50px auto;
 `
 
 const Workspaces = styled.div`
@@ -144,8 +155,20 @@ const Workspaces = styled.div`
     margin: 0;
     list-style: none;
     li {
+      margin-top: 1rem;
     }
   }
+`
+const WorkspaceIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 0.6;
+  width: 30px;
+  height: 30px;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
 `
 const ChannelsContainer = styled.div`
   border-right: 1px solid lightgrey;
@@ -245,5 +268,12 @@ const Content = styled.div`
   }
   main {
     padding: 1rem;
+    /* content header, layout header, content padding */
+    height: calc(100vh - (65px + 38px + 2rem));
+    overflow: scroll;
   }
+`
+const Lists = styled.div`
+  height: calc(100vh - (65px + 38px + 2rem));
+  overflow: scroll;
 `
