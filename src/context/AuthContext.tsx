@@ -4,6 +4,7 @@ import * as jwt from "jsonwebtoken"
 enum AuthActionTypeEnum {
   Login = "Login",
   Logout = "Logout",
+  Verify = "Verify",
   Error = "Error",
 }
 
@@ -14,22 +15,39 @@ type LoginAction = {
 type LogoutAction = {
   type: AuthActionTypeEnum.Logout
 }
+type VerifyAction = {
+  type: AuthActionTypeEnum.Verify
+  email: string
+  username: string
+}
 type ErrorAction = {
   type: AuthActionTypeEnum.Error
   error: any
 }
-type AuthAction = LoginAction | LogoutAction | ErrorAction
+type AuthAction = LoginAction | LogoutAction | ErrorAction | VerifyAction
 
 interface AuthState {
+  email?: string
+  username?: string
   token?: string | null
   error?: any
 }
+
+type TokenPayload = {
+  email: string
+  username: string
+}
+
 interface AuthContextShape extends AuthState {
+  email?: string
+  username?: string
   handleLogin(token: string): void
   handleLogout(): void
 }
 
 export const AuthContext = createContext<AuthContextShape>({
+  username: undefined,
+  email: undefined,
   token: undefined,
   error: undefined,
   handleLogin: () => {},
@@ -40,6 +58,12 @@ const authReducer = (state: AuthState, action: AuthAction) => {
   switch (action.type) {
     case AuthActionTypeEnum.Login:
       return { token: action.token }
+    case AuthActionTypeEnum.Verify:
+      return {
+        email: action.email,
+        username: action.username,
+        ...state,
+      }
     case AuthActionTypeEnum.Logout:
       return { token: undefined }
     case AuthActionTypeEnum.Error:
@@ -50,10 +74,15 @@ const authReducer = (state: AuthState, action: AuthAction) => {
 }
 
 export const AuthProvider: React.FC = ({ children }) => {
-  const [{ error, token }, dispatchAuthAction] = useReducer(authReducer, {
-    token:
-      typeof window !== "undefined" ? localStorage.getItem("TOKEN") : undefined,
-  })
+  const [{ error, token, email, username }, dispatchAuthAction] = useReducer(
+    authReducer,
+    {
+      token:
+        typeof window !== "undefined"
+          ? localStorage.getItem("TOKEN")
+          : undefined,
+    }
+  )
 
   const handleLogin = (token: string) =>
     dispatchAuthAction({ type: AuthActionTypeEnum.Login, token })
@@ -65,7 +94,16 @@ export const AuthProvider: React.FC = ({ children }) => {
       if (token) {
         // verify jwt
         try {
-          jwt.verify(token, process.env.APP_SECRET as string)
+          const { email, username } = jwt.verify(
+            token,
+            process.env.APP_SECRET as string
+          ) as TokenPayload
+
+          dispatchAuthAction({
+            type: AuthActionTypeEnum.Verify,
+            email,
+            username,
+          })
         } catch (err) {
           localStorage.removeItem("TOKEN")
           return dispatchAuthAction({
@@ -84,6 +122,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
+        email,
+        username,
         token,
         error,
         handleLogin,
