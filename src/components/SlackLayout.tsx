@@ -53,7 +53,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             </ul>
           </Workspaces>
           <ChannelsContainer>
-            <User></User>
+            <SidebarTop></SidebarTop>
             <Lists>
               <NavList>
                 <ul>
@@ -160,6 +160,9 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           </Head>
           <main>{children}</main>
         </Content>
+        <RightSidebar>
+          <SidebarTop>Test</SidebarTop>
+        </RightSidebar>
       </div>
     </Styles>
   )
@@ -167,6 +170,9 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
 const Sidebar = styled.div`
   display: grid;
   grid-template-columns: 50px auto;
+`
+const RightSidebar = styled.div`
+  border-left: 1px solid lightgrey;
 `
 
 const Workspaces = styled.div`
@@ -197,7 +203,7 @@ const WorkspaceIcon = styled.div`
 const ChannelsContainer = styled.div`
   border-right: 1px solid lightgrey;
 `
-const User = styled.div`
+const SidebarTop = styled.div`
   border-bottom: 1px solid lightgrey;
   height: 64px;
 `
@@ -275,7 +281,7 @@ const Styles = styled.div`
   .grid {
     display: grid;
     /* grid-area: "workspace"; */
-    grid-template-columns: 220px auto;
+    grid-template-columns: 220px auto 430px;
   }
 `
 
