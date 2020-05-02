@@ -3,6 +3,7 @@ import Head from "next/head"
 import Router from "next/router"
 import { createGlobalStyle } from "styled-components"
 
+import { AuthProvider } from "context"
 /**
  * Optional
  * @see https://github.com/zeit/next.js/blob/canary/examples/with-loading/pages/_app.js
@@ -30,8 +31,9 @@ const __next = ({ Component, pageProps }: AppProps) => {
       <Head>
         <></>
       </Head>
-
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
     </>
   )
 }

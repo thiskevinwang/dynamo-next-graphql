@@ -1,27 +1,74 @@
-import { createContext, Dispatch } from "react"
+import { useReducer, useEffect, createContext } from "react"
 
-export enum AuthActionTypeEnum {
+enum AuthActionTypeEnum {
   Login = "Login",
   Logout = "Logout",
 }
 
-export interface AuthAction {
-  type: AuthActionTypeEnum
-  token?: string
+type LoginAction = {
+  type: AuthActionTypeEnum.Login
+  token: string
 }
+type LogoutAction = {
+  type: AuthActionTypeEnum.Logout
+}
+type AuthAction = LoginAction | LogoutAction
 
-export interface AuthState {
+interface AuthState {
   token?: string | null
 }
 
-export interface AuthContextShape {
+interface AuthContextShape {
   authState: AuthState
-  dispatchAuthAction?: Dispatch<AuthAction>
-  actionTypes: typeof AuthActionTypeEnum
+  handleLogin(token: string): void
+  handleLogout(): void
 }
 
 export const AuthContext = createContext<AuthContextShape>({
   authState: { token: undefined },
-  dispatchAuthAction: undefined,
-  actionTypes: AuthActionTypeEnum,
+  handleLogin: () => {},
+  handleLogout: () => {},
 })
+
+const authReducer = (state: AuthState, action: AuthAction) => {
+  switch (action.type) {
+    case AuthActionTypeEnum.Login:
+      return { token: action.token }
+    case AuthActionTypeEnum.Logout:
+      return { token: undefined }
+    default:
+      return state
+  }
+}
+
+export const AuthProvider: React.FC = ({ children }) => {
+  const [authState, dispatchAuthAction] = useReducer(authReducer, {
+    token:
+      typeof window !== "undefined" ? localStorage.getItem("TOKEN") : undefined,
+  })
+
+  const handleLogin = (token: string) =>
+    dispatchAuthAction({ type: AuthActionTypeEnum.Login, token })
+  const handleLogout = () =>
+    dispatchAuthAction({ type: AuthActionTypeEnum.Logout })
+
+  useEffect(() => {
+    if (authState.token) {
+      localStorage.setItem("TOKEN", authState.token)
+    } else {
+      localStorage.removeItem("TOKEN")
+    }
+  }, [authState.token])
+
+  return (
+    <AuthContext.Provider
+      value={{
+        authState,
+        handleLogin,
+        handleLogout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
+}
