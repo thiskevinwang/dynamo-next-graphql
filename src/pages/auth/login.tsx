@@ -4,7 +4,8 @@ import { useRouter } from "next/router"
 // import Link from "next/link"
 import { request } from "graphql-request"
 // import styled from "styled-components"
-//
+
+import { useAuth } from "hooks"
 import { SlackLayout } from "components/SlackLayout"
 
 const ENDPOINT = "http://localhost:4000"
@@ -24,11 +25,17 @@ mutation Login(
   }
 }
 `
-
+interface LoginMutationResponse {
+  login: {
+    token: string
+  }
+}
 const reducer = (state: any, action: any) => {
   return { ...state, ...action }
 }
 export default (() => {
+  const { handleLogin } = useAuth()
+
   const router = useRouter()
   const [values, dispatch] = useReducer(reducer, {
     email: "kwangsan@gmail.com",
@@ -37,10 +44,9 @@ export default (() => {
   })
 
   const handleSumbit = () => {
-    request(ENDPOINT, LOGIN_MUTATION, values)
+    request<LoginMutationResponse>(ENDPOINT, LOGIN_MUTATION, values)
       .then((res) => {
-        console.log(res.login.token)
-        localStorage.setItem("TOKEN", res.login.token)
+        handleLogin(res.login.token)
       })
       .catch((err) => {
         console.error(err)
