@@ -3,7 +3,7 @@ import Link from "next/link"
 import { request } from "graphql-request"
 import styled from "styled-components"
 
-import { Layout } from "components/Layout"
+import { SlackLayout } from "components/SlackLayout"
 
 const Card = styled.div`
   padding: 1rem;
@@ -38,8 +38,7 @@ interface Product {
 
 export default (({ getProduct: e }) => {
   return (
-    <Layout>
-      <h1>Product</h1>
+    <SlackLayout title={"Product"}>
       <Card>
         <h2>
           <Link
@@ -52,8 +51,8 @@ export default (({ getProduct: e }) => {
 
         {Object.entries(e).map(([key, value]) => {
           return (
-            <div>
-              <code key={key}>
+            <div key={key}>
+              <code>
                 {key}: {value}
               </code>
             </div>
@@ -66,7 +65,7 @@ export default (({ getProduct: e }) => {
           <a>Votes</a>
         </Link>
       </Card>
-    </Layout>
+    </SlackLayout>
   )
 }) as NextPage<SSRProps>
 

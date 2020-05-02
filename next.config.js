@@ -2,7 +2,12 @@ require("dotenv").config()
 const path = require("path")
 
 module.exports = {
+  target: "serverless",
   webpack(config, options) {
+    config.resolve.alias["pg-native"] = path.join(
+      __dirname,
+      "aliases/pg-native"
+    )
     config.resolve.alias["src"] = path.join(__dirname, "src")
     config.resolve.alias["components"] = path.join(__dirname, "src/components")
     config.resolve.alias["icons"] = path.join(__dirname, "src/icons")

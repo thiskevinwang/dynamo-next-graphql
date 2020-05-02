@@ -2,12 +2,11 @@ import { NextPage } from "next"
 import Link from "next/link"
 // import styled from "styled-components"
 
-import { Layout } from "components/Layout"
+import { SlackLayout } from "components/SlackLayout"
 
 export default (() => {
   return (
-    <Layout>
-      <h1>Create</h1>
+    <SlackLayout title={"Create"}>
       <ul>
         <li>
           <Link href={"/create/product"}>
@@ -20,6 +19,6 @@ export default (() => {
           </Link>
         </li>
       </ul>
-    </Layout>
+    </SlackLayout>
   )
 }) as NextPage

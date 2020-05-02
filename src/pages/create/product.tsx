@@ -5,7 +5,7 @@ import useSwr from "swr"
 import { request } from "graphql-request"
 // import styled from "styled-components"
 
-import { Layout } from "components/Layout"
+import { SlackLayout } from "components/SlackLayout"
 
 const ENDPOINT = "http://localhost:4000"
 const FRAGMENT = `
@@ -63,8 +63,7 @@ export default (() => {
   if (error) return <>Error</>
   if (!data) return <>Loading</>
   return (
-    <Layout>
-      <h1>Create a Product</h1>
+    <SlackLayout title={"Create a Product"}>
       <input
         value={productName}
         onChange={(e) => setProductName(e.target.value)}
@@ -72,7 +71,7 @@ export default (() => {
       />
       <button onClick={mutate}>Submit</button>
       <div>{message}</div>
-    </Layout>
+    </SlackLayout>
   )
 }) as NextPage
 
