@@ -76,5 +76,9 @@ yarn-error.log
 # Yarn Integrity file
 .yarn-integrity
 
-
+# Vercel
 .now
+
+# Serverless
+.serverless
+.serverless_nextjs
