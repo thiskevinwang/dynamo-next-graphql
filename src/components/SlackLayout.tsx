@@ -34,6 +34,16 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
               <a>Upload</a>
             </Link>
           </li>
+          <li>
+            <Link href={"/auth/signup"}>
+              <a>Signup</a>
+            </Link>
+          </li>
+          <li>
+            <Link href={"/auth/login"}>
+              <a>Login</a>
+            </Link>
+          </li>
         </ul>
       </header>
       <div className="grid">
@@ -189,7 +199,7 @@ const Sidebar = styled.div`
     grid-template-columns: 50px auto;
   }
 `
-const RightSidebar = styled.div`
+const RightSidebar = styled.aside`
   border-left: 1px solid lightgrey;
 `
 
@@ -280,6 +290,7 @@ const Styles = styled.div`
     border-bottom: 1px solid lightgrey;
 
     ul {
+      padding: 0;
       margin: 0;
       list-style: none;
       li {

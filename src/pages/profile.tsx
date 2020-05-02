@@ -106,7 +106,7 @@ export default (() => {
   }
 
   return (
-    <SlackLayout title={"Upload Avatar"}>
+    <SlackLayout title={"Profile"}>
       <div>signedUrl: {signedUrl}</div>
       <div>objectUrl: {objectUrl}</div>
       <div>imgSrc: {imgSrc}</div>
