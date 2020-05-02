@@ -29,6 +29,11 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
               <a>Create</a>
             </Link>
           </li>
+          <li>
+            <Link href={"/profile"}>
+              <a>Upload</a>
+            </Link>
+          </li>
         </ul>
       </header>
       <div className="grid">
@@ -169,7 +174,20 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
 }
 const Sidebar = styled.div`
   display: grid;
-  grid-template-columns: 50px auto;
+  grid-template-columns: 0px 0px;
+  overflow: hidden;
+  @media (min-width: 600px) {
+    grid-template-columns: 50px auto;
+  }
+  @media (min-width: 960px) {
+    grid-template-columns: 50px auto;
+  }
+  @media (min-width: 1280px) {
+    grid-template-columns: 50px auto;
+  }
+  @media (min-width: 1920px) {
+    grid-template-columns: 50px auto;
+  }
 `
 const RightSidebar = styled.div`
   border-left: 1px solid lightgrey;
@@ -254,14 +272,8 @@ const Styles = styled.div`
   height: 100vh;
   display: grid;
   grid-template-rows: 38px auto min-content;
-  grid-template-areas:
-    "header__nav"
-    "workspace"
-    "what_goes_here";
-  grid-template-areas: "p-client__workspace";
 
   .header {
-    grid-area: "header__nav";
     display: flex;
     justify-content: center;
     align-items: center;
@@ -280,8 +292,20 @@ const Styles = styled.div`
 
   .grid {
     display: grid;
-    /* grid-area: "workspace"; */
-    grid-template-columns: 220px auto 430px;
+    grid-template-columns: 0px auto 0px;
+    overflow: hidden;
+    @media (min-width: 600px) {
+      grid-template-columns: 220px auto 300px;
+    }
+    @media (min-width: 960px) {
+      grid-template-columns: 220px auto 350px;
+    }
+    @media (min-width: 1280px) {
+      grid-template-columns: 220px auto 400px;
+    }
+    @media (min-width: 1920px) {
+      grid-template-columns: 220px auto 430px;
+    }
   }
 `
 
