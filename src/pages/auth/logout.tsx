@@ -5,9 +5,7 @@ import { SlackLayout } from "components/SlackLayout"
 import { useAuth } from "hooks"
 
 export default (() => {
-  const {
-    authState: { token },
-  } = useAuth()
+  const { token } = useAuth()
   const router = useRouter()
 
   if (typeof token !== "undefined") {

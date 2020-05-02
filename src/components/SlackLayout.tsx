@@ -11,10 +11,8 @@ interface Props {
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
-  const {
-    authState: { token },
-    handleLogout,
-  } = useAuth()
+  const { token, error, handleLogout } = useAuth()
+
   return (
     <Styles>
       <header className="header">
@@ -35,7 +33,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
               <a>Create</a>
             </Link>
           </li>*/}
-          {typeof token === "undefined" ? (
+          {!token ? (
             <>
               <li>
                 <Link href={"/auth/signup"}>
@@ -194,7 +192,11 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           <main>{children}</main>
         </Content>
         <RightSidebar>
-          <SidebarTop>Test</SidebarTop>
+          <SidebarTop>
+            <div>Test</div>
+          </SidebarTop>
+          <div>{token}</div>
+          <div>{JSON.stringify(error, null, 2)}</div>
         </RightSidebar>
       </div>
     </Styles>
