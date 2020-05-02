@@ -27,7 +27,6 @@ import { SlackLayout } from "components/SlackLayout"
 //   PK: string
 //   SK: string
 //   username?: string
-//   fullname?: string
 //   email?: string
 //   createdAt?: string
 //   updatedAt?: string

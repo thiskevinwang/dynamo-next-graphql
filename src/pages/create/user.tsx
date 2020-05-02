@@ -42,7 +42,6 @@ mutation User($username: String!, $email: String!) {
 //   PK: string
 //   SK: string
 //   username?: string
-//   fullname?: string
 //   email?: string
 //   createdAt?: string
 //   updatedAt?: string

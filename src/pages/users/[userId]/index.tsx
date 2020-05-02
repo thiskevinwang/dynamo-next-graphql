@@ -33,7 +33,8 @@ interface User {
   PK: string
   SK: string
   username?: string
-  fullname?: string
+  firstName?: string
+  lastName?: string
   email?: string
   createdAt?: string
   updatedAt?: string
