@@ -12,7 +12,8 @@ query QueryUsers {
     PK
     SK
     username
-    fullname
+    firstName
+    lastName
     email
     createdAt
     updatedAt
@@ -24,7 +25,8 @@ interface User {
   PK: string
   SK: string
   username?: string
-  fullname?: string
+  firstName?: string
+  lastName?: string
   email?: string
   createdAt?: string
   updatedAt?: string

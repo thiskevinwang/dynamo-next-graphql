@@ -10,6 +10,7 @@ module.exports = {
     )
     config.resolve.alias["src"] = path.join(__dirname, "src")
     config.resolve.alias["components"] = path.join(__dirname, "src/components")
+    config.resolve.alias["context"] = path.join(__dirname, "src/context")
     config.resolve.alias["icons"] = path.join(__dirname, "src/icons")
     config.resolve.alias["lib"] = path.join(__dirname, "src/lib")
     config.resolve.alias["consts"] = path.join(__dirname, "src/consts")
@@ -23,11 +24,7 @@ module.exports = {
     )
     return config
   },
-  // env: {
-  //   GRAPHQL_URI: process.env.GRAPHQL_URI,
-  //   CONNECTION_STRING: process.env.CONNECTION_STRING,
-  //   DB_NAME: process.env.DB_NAME,
-  //   COLLECTION_NAME: process.env.COLLECTION_NAME,
-  //   GATSBY_APP_SECRET: process.env.GATSBY_APP_SECRET,
-  // },
+  env: {
+    APP_SECRET: process.env.APP_SECRET,
+  },
 }

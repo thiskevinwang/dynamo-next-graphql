@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.5.0] - 2020-05-02
+
+### Changes
+
+Bump minor version to be in sync with https://github.com/thiskevinwang/dynamodb-graphql-server/pull/9
+
+Install `jsonwebtoken`
+
+Create `AuthContext` & hook
+
 ## [v0.0.3] - 2020-05-02
 
 ### Changes

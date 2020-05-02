@@ -5,6 +5,7 @@ import { request } from "graphql-request"
 // import styled from "styled-components"
 //
 import { SlackLayout } from "components/SlackLayout"
+import { useAuth } from "hooks"
 
 const ENDPOINT = "http://localhost:4000"
 
@@ -27,11 +28,18 @@ mutation Signup(
   }
 }
 `
+interface SignupMutationResponse {
+  signup: {
+    token: string
+  }
+}
 
 const reducer = (state: any, action: any) => {
   return { ...state, ...action }
 }
 export default (() => {
+  const { handleLogin } = useAuth()
+
   const [values, dispatch] = useReducer(reducer, {
     email: "",
     password: "",
@@ -41,10 +49,9 @@ export default (() => {
   })
 
   const handleSumbit = () => {
-    request(ENDPOINT, SIGNUP_MUTATION, values)
+    request<SignupMutationResponse>(ENDPOINT, SIGNUP_MUTATION, values)
       .then((res) => {
-        console.log(res.signup.token)
-        localStorage.setItem("TOKEN", res.signup.token)
+        handleLogin(res.signup.token)
       })
       .catch((err) => {
         console.error(err)

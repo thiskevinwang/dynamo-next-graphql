@@ -4,11 +4,16 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 
+import { useAuth } from "hooks"
+import { RightPanel } from "components/RightPanel"
+
 interface Props {
   title?: string
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
+  const { email, username, token, handleLogout } = useAuth()
+
   return (
     <Styles>
       <header className="header">
@@ -24,26 +29,38 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
               <a>Home</a>
             </Link>
           </li>
-          <li>
+          {/*<li>
             <Link href={"/create"}>
               <a>Create</a>
             </Link>
-          </li>
-          <li>
-            <Link href={"/profile"}>
-              <a>Upload</a>
-            </Link>
-          </li>
-          <li>
-            <Link href={"/auth/signup"}>
-              <a>Signup</a>
-            </Link>
-          </li>
-          <li>
-            <Link href={"/auth/login"}>
-              <a>Login</a>
-            </Link>
-          </li>
+          </li>*/}
+          {!token ? (
+            <>
+              <li>
+                <Link href={"/auth/signup"}>
+                  <a>Signup</a>
+                </Link>
+              </li>
+              <li>
+                <Link href={"/auth/login"}>
+                  <a>Login</a>
+                </Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link href={"/profile"}>
+                  <a>Profile</a>
+                </Link>
+              </li>
+              <li>
+                <Link href={"/auth/logout"}>
+                  <a onClick={handleLogout}>Logout</a>
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </header>
       <div className="grid">
@@ -176,7 +193,9 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           <main>{children}</main>
         </Content>
         <RightSidebar>
-          <SidebarTop>Test</SidebarTop>
+          {email && username && (
+            <RightPanel email={email} username={username} />
+          )}
         </RightSidebar>
       </div>
     </Styles>
