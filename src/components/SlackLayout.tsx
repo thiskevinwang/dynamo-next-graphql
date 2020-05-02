@@ -5,13 +5,14 @@ import { useRouter } from "next/router"
 import styled from "styled-components"
 
 import { useAuth } from "hooks"
+import { RightPanel } from "components/RightPanel"
 
 interface Props {
   title?: string
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
-  const { token, error, handleLogout } = useAuth()
+  const { email, username, token, handleLogout } = useAuth()
 
   return (
     <Styles>
@@ -192,11 +193,9 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           <main>{children}</main>
         </Content>
         <RightSidebar>
-          <SidebarTop>
-            <div>Test</div>
-          </SidebarTop>
-          <div>{token}</div>
-          <div>{JSON.stringify(error, null, 2)}</div>
+          {email && username && (
+            <RightPanel email={email} username={username} />
+          )}
         </RightSidebar>
       </div>
     </Styles>
