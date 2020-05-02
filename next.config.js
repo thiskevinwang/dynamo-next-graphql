@@ -10,6 +10,7 @@ module.exports = {
     )
     config.resolve.alias["src"] = path.join(__dirname, "src")
     config.resolve.alias["components"] = path.join(__dirname, "src/components")
+    config.resolve.alias["context"] = path.join(__dirname, "src/context")
     config.resolve.alias["icons"] = path.join(__dirname, "src/icons")
     config.resolve.alias["lib"] = path.join(__dirname, "src/lib")
     config.resolve.alias["consts"] = path.join(__dirname, "src/consts")
