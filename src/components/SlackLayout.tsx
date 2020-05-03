@@ -63,8 +63,8 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           )}
         </ul>
       </header>
-      <div className="grid">
-        <Sidebar>
+      <ContentGrid>
+        <LeftSidebar>
           <Workspaces>
             <ul>
               <li>
@@ -180,7 +180,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
               </ChannelList>
             </Lists>
           </ChannelsContainer>
-        </Sidebar>
+        </LeftSidebar>
         <Content>
           <header>
             <div>
@@ -197,11 +197,11 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             <RightPanel email={email} username={username} />
           )}
         </RightSidebar>
-      </div>
+      </ContentGrid>
     </Styles>
   )
 }
-const Sidebar = styled.div`
+const LeftSidebar = styled.div`
   display: grid;
   grid-template-columns: 0px 0px;
   overflow: hidden;
@@ -319,23 +319,39 @@ const Styles = styled.div`
       }
     }
   }
+`
 
-  .grid {
-    display: grid;
-    grid-template-columns: 0px auto 0px;
-    overflow: hidden;
-    @media (min-width: 600px) {
-      grid-template-columns: 220px auto 300px;
-    }
-    @media (min-width: 960px) {
-      grid-template-columns: 220px auto 350px;
-    }
-    @media (min-width: 1280px) {
-      grid-template-columns: 220px auto 400px;
-    }
-    @media (min-width: 1920px) {
-      grid-template-columns: 220px auto 430px;
-    }
+const LEFT = 220
+const RIGHT_SM = 280
+const RIGHT_MD = 350
+const RIGHT_LG = 400
+const RIGHT_XL = 430
+
+const ContentGrid = styled.div`
+  display: grid;
+  grid-template-columns: 0px minmax(auto, 100vw) 0px;
+  /* animated grid only supported by Firefox - 2020-05-02 */
+  transition: grid-template-columns 200ms ease-in-out;
+
+  @media (min-width: 600px) {
+    grid-template-columns:
+      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_SM}px))
+      ${RIGHT_SM}px;
+  }
+  @media (min-width: 960px) {
+    grid-template-columns:
+      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_MD}px))
+      ${RIGHT_MD}px;
+  }
+  @media (min-width: 1280px) {
+    grid-template-columns:
+      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_MD}px))
+      ${RIGHT_LG}px;
+  }
+  @media (min-width: 1920px) {
+    grid-template-columns:
+      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_MD}px))
+      ${RIGHT_XL}px;
   }
 `
 
@@ -344,6 +360,8 @@ const Content = styled.div`
     display: flex;
     height: 64px;
     border-bottom: 1px solid lightgrey;
+    overflow: hidden;
+
     div {
       padding: 1rem;
       display: flex;
