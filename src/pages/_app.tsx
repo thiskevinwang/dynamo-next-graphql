@@ -3,6 +3,10 @@ import Head from "next/head"
 import Router from "next/router"
 import { createGlobalStyle } from "styled-components"
 
+import "../../_CerealFont.css"
+import "../../_FiraCodeFont.css"
+import "../../_global.css"
+
 import { AuthProvider } from "context"
 /**
  * Optional
