@@ -329,11 +329,13 @@ const RIGHT_XL = 430
 
 const ContentGrid = styled.div`
   display: grid;
+  overflow: hidden;
   grid-template-columns: 0px minmax(auto, 100vw) 0px;
   /* animated grid only supported by Firefox - 2020-05-02 */
   transition: grid-template-columns 200ms ease-in-out;
 
   @media (min-width: 600px) {
+    overflow: unset;
     grid-template-columns:
       ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_SM}px))
       ${RIGHT_SM}px;
