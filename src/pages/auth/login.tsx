@@ -64,6 +64,7 @@ export default (() => {
             <input
               value={values[key]}
               placeholder={key}
+              type={key}
               onChange={(e) => dispatch({ [key]: e.target.value })}
             />
           </div>
