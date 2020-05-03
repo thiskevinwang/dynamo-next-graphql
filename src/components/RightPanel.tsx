@@ -14,6 +14,7 @@ query GetUser($username: String!, $email: String!) {
     createdAt
     firstName
     lastName
+    avatarUrl
   }
 }
 `
@@ -26,6 +27,7 @@ interface User {
   email?: string
   createdAt?: string
   updatedAt?: string
+  avatarUrl?: string
 }
 
 const Top = styled.div`
@@ -37,35 +39,36 @@ const Top = styled.div`
     padding: 1rem;
   }
 `
-const Body = styled.div``
+const Body = styled.div`
+  img {
+    max-width: 100%;
+
+    background: lightgrey;
+  }
+  dd {
+    margin: 0px;
+    text-align: center;
+  }
+`
 interface Props {
   email: string
   username: string
 }
 export const RightPanel: FC<Props> = ({ email, username }) => {
-  const { data, error } = useSwr<{ getUser: User }>(
-    GET_USER_QUERY,
-    (query) => request(ENDPOINT, query, { email, username }),
-    {}
+  const { data } = useSwr<{ getUser: User }>(GET_USER_QUERY, (query) =>
+    request(ENDPOINT, query, { email, username })
   )
 
   return (
     <>
       <Top>
-        <span>Right Panel</span>
+        <span>Details</span>
       </Top>
       <Body>
-        {!data || error
-          ? "Loading"
-          : Object.entries(data.getUser).map(([key, value]) => {
-              return (
-                <div key={key}>
-                  <code>
-                    {key}: {value}
-                  </code>
-                </div>
-              )
-            })}
+        <img src={data?.getUser.avatarUrl} alt="user avatar" />
+        <dd>
+          <h1>{data?.getUser.username}</h1>
+        </dd>
       </Body>
     </>
   )

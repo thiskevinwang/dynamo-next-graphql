@@ -1,0 +1,13 @@
+:root {
+  --font-sans: Cereal, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  --font-mono: FiraCode, Menlo, Monaco, Lucida Console, Liberation Mono,
+    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+
+  font-family: var(--font-sans);
+}
+
+code {
+  font-family: var(--font-mono);
+}

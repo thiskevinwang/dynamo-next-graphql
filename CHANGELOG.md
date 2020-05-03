@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.6.0] - 2020-05-03
+
+### Changes
+
+add type of input fields ff50a31
+
+Layout - tokenize css values abbb42b
+
+let profile page update user's avatatUrl 161f962
+
+add Cereal & FiraCode fonts 66432eb
+
+RightPanel - use avatarUrl 0ab670d
+
 ## [v0.5.0] - 2020-05-02
 
 ### Changes

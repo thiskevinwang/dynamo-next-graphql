@@ -2,11 +2,12 @@ import { useState, useEffect } from "react"
 import { NextPage } from "next"
 // import useSwr from "swr"
 // import Link from "next/link"
-import { request } from "graphql-request"
+import { GraphQLClient } from "graphql-request"
 import fetch from "isomorphic-unfetch"
 // import styled from "styled-components"
 
 import { SlackLayout } from "components/SlackLayout"
+import { useAuth } from "hooks"
 
 const ENDPOINT = "http://localhost:4000"
 
@@ -26,6 +27,16 @@ mutation S3(
   }
 }
 `
+
+const UPDATE_AVATAR_URL_MUTATION = `
+mutation UpdateAvatarUrl($avatarUrl: String!) {
+  updateUserAvatarUrl(avatarUrl: $avatarUrl) {
+    PK
+    SK
+  }
+}
+`
+
 // Note 's3' field alias
 type Response = {
   s3: {
@@ -35,6 +46,12 @@ type Response = {
 }
 
 export default (() => {
+  const { token } = useAuth()
+  const client = new GraphQLClient(ENDPOINT, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
   /**
    * imgSrc is sent directly to S3
    */
@@ -77,14 +94,15 @@ export default (() => {
   const [signedUrl, setSignedUrl] = useState("")
   const [objectUrl, setObjectUrl] = useState("")
   const getSignedUrl = () =>
-    request<Response>(ENDPOINT, S3_GET_SIGNED_PUT_OBJECT_URL_MUTATION, {
-      fileName: formatFilename({
-        filename: file?.name,
-        username: "kevin",
-      }),
-      fileType: file?.type,
-      fileSize: file?.size,
-    })
+    client
+      .request<Response>(S3_GET_SIGNED_PUT_OBJECT_URL_MUTATION, {
+        fileName: formatFilename({
+          filename: file?.name,
+          username: "kevin",
+        }),
+        fileType: file?.type,
+        fileSize: file?.size,
+      })
       .then((data) => {
         console.log(data)
         setSignedUrl(data.s3.signedPutObjectUrl)
@@ -102,6 +120,10 @@ export default (() => {
         (imgSrc as string).replace(/^data:image\/\w+;base64,/, ""),
         "base64"
       ),
+    }).then(() => {
+      client.request(UPDATE_AVATAR_URL_MUTATION, {
+        avatarUrl: objectUrl,
+      })
     })
   }
 
