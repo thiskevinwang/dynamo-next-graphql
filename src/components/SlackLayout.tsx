@@ -2,30 +2,11 @@ import React from "react"
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
-import useSwr from "swr"
-import { request } from "graphql-request"
 import styled from "styled-components"
 
 import { useAuth } from "hooks"
 import { RightPanel } from "components/RightPanel"
-
-const ENDPOINT = "http://localhost:4000"
-const QUERY_CHANNELS_QUERY = `
-query QueryChannels {
-  queryChannels {
-    PK
-    SK
-    channelName
-  }
-}
-`
-interface QueryChannelsResponse {
-  queryChannels: {
-    PK: string
-    SK: string
-    channelName: string
-  }[]
-}
+import { ChannelList } from "components/ChannelList"
 
 interface Props {
   title?: string
@@ -33,11 +14,6 @@ interface Props {
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
   const { email, username, token, handleLogout } = useAuth()
-
-  const { data } = useSwr<QueryChannelsResponse>(
-    QUERY_CHANNELS_QUERY,
-    (query) => request(ENDPOINT, query)
-  )
 
   return (
     <Styles>
@@ -185,29 +161,12 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                 </ul>
               </NavList>
-              <ChannelList>
-                <details open>
-                  <summary>Channels</summary>
-                  <ul>
-                    {data?.queryChannels.map((channel) => {
-                      const { PK, SK, channelName } = channel
-                      return (
-                        <li key={`${PK}${SK}`}>
-                          <Link
-                            href={"/channels/[channelName]"}
-                            as={`/channels/${channelName}`}
-                          >
-                            <a>{channelName}</a>
-                          </Link>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </details>
-              </ChannelList>
+
+              <ChannelList />
             </Lists>
           </ChannelsContainer>
         </LeftSidebar>
+
         <Content>
           <header>
             <div>
@@ -219,6 +178,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           </Head>
           <main>{children}</main>
         </Content>
+
         <RightSidebar>
           {email && username && (
             <RightPanel email={email} username={username} />
@@ -286,27 +246,6 @@ const NavList = styled.div`
   padding-top: 10px;
   padding-bottom: 10px;
 
-  ul {
-    display: flex;
-    flex-direction: column;
-
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    li {
-      padding-left: 1rem;
-      height: 28px;
-      display: flex;
-      align-items: center;
-    }
-  }
-`
-const ChannelList = styled.div`
-  padding-top: 10px;
-  padding-bottom: 10px;
-  summary {
-    padding-left: 1rem;
-  }
   ul {
     display: flex;
     flex-direction: column;
