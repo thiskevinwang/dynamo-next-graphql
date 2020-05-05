@@ -2,10 +2,30 @@ import React from "react"
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
+import useSwr from "swr"
+import { request } from "graphql-request"
 import styled from "styled-components"
 
 import { useAuth } from "hooks"
 import { RightPanel } from "components/RightPanel"
+
+const ENDPOINT = "http://localhost:4000"
+const QUERY_CHANNELS_QUERY = `
+query QueryChannels {
+  queryChannels {
+    PK
+    SK
+    channelName
+  }
+}
+`
+interface QueryChannelsResponse {
+  queryChannels: {
+    PK: string
+    SK: string
+    channelName: string
+  }[]
+}
 
 interface Props {
   title?: string
@@ -13,6 +33,11 @@ interface Props {
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
   const { email, username, token, handleLogout } = useAuth()
+
+  const { data } = useSwr<QueryChannelsResponse>(
+    QUERY_CHANNELS_QUERY,
+    (query) => request(ENDPOINT, query)
+  )
 
   return (
     <Styles>
@@ -91,7 +116,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                 <ul>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/all_unreads"}
                     >
                       <a>All Unreads</a>
@@ -99,7 +124,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/threads"}
                     >
                       <a>Threads</a>
@@ -107,7 +132,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/mentions_and_reactions"}
                     >
                       <a>Mentions & reactions</a>
@@ -115,7 +140,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/drafts"}
                     >
                       <a>Drafts</a>
@@ -123,7 +148,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/saved_items"}
                     >
                       <a>Saved items</a>
@@ -131,7 +156,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/people"}
                     >
                       <a>People</a>
@@ -139,7 +164,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/apps"}
                     >
                       <a>Apps</a>
@@ -147,7 +172,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/files"}
                     >
                       <a>Files</a>
@@ -161,20 +186,22 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                 </ul>
               </NavList>
               <ChannelList>
-                <details>
+                <details open>
                   <summary>Channels</summary>
                   <ul>
-                    {Array(30)
-                      .fill(null)
-                      .map((_e, i) => {
-                        return (
-                          <li key={i}>
-                            <Link href={"/"}>
-                              <a>Channel {i}</a>
-                            </Link>
-                          </li>
-                        )
-                      })}
+                    {data?.queryChannels.map((channel) => {
+                      const { PK, SK, channelName } = channel
+                      return (
+                        <li key={`${PK}${SK}`}>
+                          <Link
+                            href={"/channels/[channelName]"}
+                            as={`/channels/${channelName}`}
+                          >
+                            <a>{channelName}</a>
+                          </Link>
+                        </li>
+                      )
+                    })}
                   </ul>
                 </details>
               </ChannelList>
@@ -358,7 +385,8 @@ const ContentGrid = styled.div`
 `
 
 const Content = styled.div`
-  header {
+  position: relative;
+  > header {
     display: flex;
     height: 64px;
     border-bottom: 1px solid lightgrey;
@@ -370,8 +398,7 @@ const Content = styled.div`
       align-items: center;
     }
   }
-  main {
-    padding: 1rem;
+  > main {
     /* content header, layout header, content padding */
     height: calc(100vh - (65px + 38px + 2rem));
     overflow: scroll;
