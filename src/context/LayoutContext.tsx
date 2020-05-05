@@ -19,30 +19,34 @@ interface Props {
 /**
  * @todo refactor
  * This helps scroll a message-list to the bottom
+ * only for "/channels/[channelName]"
  */
 export const LayoutContextProvider: FC<Props> = ({ children, mainRef }) => {
   const router = useRouter()
+  const isChannelsRoute = router.route === "/channels/[channelName]"
   const main = mainRef?.current
 
   // scroll to bottom on route change
   useEffect(() => {
     const handleRouteChangeComplete = () => {
-      if (main) {
+      if (main && isChannelsRoute) {
         main.scrollTo(0, main.scrollHeight)
       }
     }
+
     router.events.on("routeChangeComplete", handleRouteChangeComplete)
+
     return () => {
       router.events.off("routeChangeComplete", handleRouteChangeComplete)
     }
-  }, [main])
+  }, [main, isChannelsRoute])
 
   // scroll to bottom on mount
   useEffect(() => {
-    if (main) {
+    if (main && isChannelsRoute) {
       main.scrollTo(0, main.scrollHeight)
     }
-  }, [main?.scrollHeight])
+  }, [main?.scrollHeight, isChannelsRoute])
 
   return (
     <LayoutContext.Provider value={{ mainRef: mainRef }}>
