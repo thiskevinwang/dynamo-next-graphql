@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
@@ -7,6 +7,7 @@ import styled from "styled-components"
 import { useAuth } from "hooks"
 import { RightPanel } from "components/RightPanel"
 import { ChannelList } from "components/ChannelList"
+import { LayoutContextProvider } from "context"
 
 interface Props {
   title?: string
@@ -15,6 +16,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
   const { email, username, token, handleLogout } = useAuth()
 
+  const mainRef = useRef<HTMLElement>(null)
   return (
     <Styles>
       <header className="header">
@@ -176,7 +178,9 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           <Head>
             <title>{title}</title>
           </Head>
-          <main>{children}</main>
+          <LayoutContextProvider mainRef={mainRef}>
+            <main ref={mainRef}>{children}</main>
+          </LayoutContextProvider>
         </Content>
 
         <RightSidebar>
