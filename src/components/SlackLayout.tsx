@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
@@ -6,6 +6,8 @@ import styled from "styled-components"
 
 import { useAuth } from "hooks"
 import { RightPanel } from "components/RightPanel"
+import { ChannelList } from "components/ChannelList"
+import { LayoutContextProvider } from "context"
 
 interface Props {
   title?: string
@@ -14,6 +16,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
   const { email, username, token, handleLogout } = useAuth()
 
+  const mainRef = useRef<HTMLElement>(null)
   return (
     <Styles>
       <header className="header">
@@ -91,7 +94,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                 <ul>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/all_unreads"}
                     >
                       <a>All Unreads</a>
@@ -99,7 +102,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/threads"}
                     >
                       <a>Threads</a>
@@ -107,7 +110,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/mentions_and_reactions"}
                     >
                       <a>Mentions & reactions</a>
@@ -115,7 +118,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/drafts"}
                     >
                       <a>Drafts</a>
@@ -123,7 +126,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/saved_items"}
                     >
                       <a>Saved items</a>
@@ -131,7 +134,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/people"}
                     >
                       <a>People</a>
@@ -139,7 +142,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/apps"}
                     >
                       <a>Apps</a>
@@ -147,7 +150,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                   <li>
                     <Link
-                      href={"/channels/[channel_name]"}
+                      href={"/channels/[channelName]"}
                       as={"/channels/files"}
                     >
                       <a>Files</a>
@@ -160,27 +163,12 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
                   </li>
                 </ul>
               </NavList>
-              <ChannelList>
-                <details>
-                  <summary>Channels</summary>
-                  <ul>
-                    {Array(30)
-                      .fill(null)
-                      .map((_e, i) => {
-                        return (
-                          <li key={i}>
-                            <Link href={"/"}>
-                              <a>Channel {i}</a>
-                            </Link>
-                          </li>
-                        )
-                      })}
-                  </ul>
-                </details>
-              </ChannelList>
+
+              <ChannelList />
             </Lists>
           </ChannelsContainer>
         </LeftSidebar>
+
         <Content>
           <header>
             <div>
@@ -190,8 +178,11 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           <Head>
             <title>{title}</title>
           </Head>
-          <main>{children}</main>
+          <LayoutContextProvider mainRef={mainRef}>
+            <main ref={mainRef}>{children}</main>
+          </LayoutContextProvider>
         </Content>
+
         <RightSidebar>
           {email && username && (
             <RightPanel email={email} username={username} />
@@ -274,27 +265,6 @@ const NavList = styled.div`
     }
   }
 `
-const ChannelList = styled.div`
-  padding-top: 10px;
-  padding-bottom: 10px;
-  summary {
-    padding-left: 1rem;
-  }
-  ul {
-    display: flex;
-    flex-direction: column;
-
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    li {
-      padding-left: 1rem;
-      height: 28px;
-      display: flex;
-      align-items: center;
-    }
-  }
-`
 
 const Styles = styled.div`
   width: 100vw;
@@ -358,7 +328,8 @@ const ContentGrid = styled.div`
 `
 
 const Content = styled.div`
-  header {
+  position: relative;
+  > header {
     display: flex;
     height: 64px;
     border-bottom: 1px solid lightgrey;
@@ -370,8 +341,7 @@ const Content = styled.div`
       align-items: center;
     }
   }
-  main {
-    padding: 1rem;
+  > main {
     /* content header, layout header, content padding */
     height: calc(100vh - (65px + 38px + 2rem));
     overflow: scroll;

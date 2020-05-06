@@ -16,10 +16,13 @@ const GET_USER = `
 fragment Shared on User {
   PK
   SK
-  username
-  email
   createdAt
   updatedAt
+  firstName
+  lastName
+  username
+  email
+  avatarUrl
 }
 
 query GetUser($username: String!, $email: String!) {
@@ -32,12 +35,13 @@ query GetUser($username: String!, $email: String!) {
 interface User {
   PK: string
   SK: string
-  username?: string
-  firstName?: string
-  lastName?: string
-  email?: string
   createdAt?: string
   updatedAt?: string
+  firstName?: string
+  lastName?: string
+  username?: string
+  email?: string
+  avatarUrl?: string
 }
 
 export default (({ getUser: e }) => {
@@ -49,16 +53,16 @@ export default (({ getUser: e }) => {
             <a>{e.username}</a>
           </Link>
         </h2>
+        <img src={e.avatarUrl} alt={"User Avatar"} />
         <section>
-          {Object.entries(e).map(([key, value]) => {
-            return (
-              <div key={key}>
-                <code>
-                  {key}: {value}
-                </code>
-              </div>
-            )
-          })}
+          <div>
+            <code>{e.username}</code>
+          </div>
+          <div>
+            <code>
+              {e.firstName} {e.lastName}
+            </code>
+          </div>
           <Link
             href={"/users/[userId]/votes"}
             as={`/users/${e.username}/votes`}

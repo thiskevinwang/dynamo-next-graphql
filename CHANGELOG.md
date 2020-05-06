@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.7.0] - 2020-05-05
+
+Depends on https://github.com/thiskevinwang/dynamodb-graphql-server/releases/tag/v0.7.0
+
+### Changes
+
+Add functionality to support `Channels` and `Messages`
+
+- make `/[channelName]` query for Messages
+- extract `ChannelList` to query for Channels
+- create LayoutContext
+  - this helps scroll functionality
+  - only scroll to bottom on `/channels/[channelName]`
+
+### Changelog
+
+https://github.com/thiskevinwang/dynamo-next-graphql/compare/v0.6.0...v0.7.0
+
 ## [v0.6.0] - 2020-05-03
 
 ### Changes
