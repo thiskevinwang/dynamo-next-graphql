@@ -7,7 +7,7 @@ import "../../_CerealFont.css"
 import "../../_FiraCodeFont.css"
 import "../../_global.css"
 
-import { AuthProvider } from "context"
+import { AuthProvider, RightPanelProvider } from "context"
 /**
  * Optional
  * @see https://github.com/zeit/next.js/blob/canary/examples/with-loading/pages/_app.js
@@ -36,7 +36,9 @@ const __next = ({ Component, pageProps }: AppProps) => {
         <></>
       </Head>
       <AuthProvider>
-        <Component {...pageProps} />
+        <RightPanelProvider>
+          <Component {...pageProps} />
+        </RightPanelProvider>
       </AuthProvider>
     </>
   )
