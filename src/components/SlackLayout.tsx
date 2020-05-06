@@ -14,7 +14,7 @@ interface Props {
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
-  const { email, username, token, handleLogout } = useAuth()
+  const { token, handleLogout } = useAuth()
 
   const mainRef = useRef<HTMLElement>(null)
   return (
@@ -184,9 +184,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
         </Content>
 
         <RightSidebar>
-          {email && username && (
-            <RightPanel email={email} username={username} />
-          )}
+          <RightPanel />
         </RightSidebar>
       </ContentGrid>
     </Styles>
