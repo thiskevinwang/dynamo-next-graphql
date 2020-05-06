@@ -7,7 +7,7 @@ import styled from "styled-components"
 import { SlackLayout } from "components/SlackLayout"
 import { useAuth } from "hooks"
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 const client = new GraphQLClient(ENDPOINT)
 
 const ROW_FRAGMENT = `

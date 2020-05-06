@@ -8,7 +8,7 @@ import { request } from "graphql-request"
 import { useAuth } from "hooks"
 import { SlackLayout } from "components/SlackLayout"
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 
 const LOGIN_MUTATION = `
 mutation Login(

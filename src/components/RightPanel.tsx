@@ -3,7 +3,7 @@ import styled from "styled-components"
 import useSwr from "swr"
 import { request } from "graphql-request"
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 const GET_USER_QUERY = `
 query GetUser($username: String!, $email: String!) {
   getUser(username: $username, email: $email) {

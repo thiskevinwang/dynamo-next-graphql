@@ -3,7 +3,7 @@ import styled from "styled-components"
 import useSwr from "swr"
 import { request } from "graphql-request"
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 const QUERY_CHANNELS_QUERY = `
 query QueryChannels {
   queryChannels {

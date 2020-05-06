@@ -11,7 +11,7 @@ const Card = styled.div`
   display: block;
 `
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 const GET_PRODUCT = `
 fragment Shared on Product {
   PK

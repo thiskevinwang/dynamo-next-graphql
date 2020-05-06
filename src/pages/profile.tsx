@@ -9,7 +9,7 @@ import fetch from "isomorphic-unfetch"
 import { SlackLayout } from "components/SlackLayout"
 import { useAuth } from "hooks"
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 
 const S3_GET_SIGNED_PUT_OBJECT_URL_MUTATION = `
 mutation S3(

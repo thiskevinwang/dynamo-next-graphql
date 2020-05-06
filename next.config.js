@@ -26,5 +26,6 @@ module.exports = {
   },
   env: {
     APP_SECRET: process.env.APP_SECRET,
+    ENDPOINT: process.env.ENDPOINT,
   },
 }
