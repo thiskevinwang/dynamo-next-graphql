@@ -5,7 +5,7 @@ import { GraphQLClient } from "graphql-request"
 import styled from "styled-components"
 
 import { SlackLayout } from "components/SlackLayout"
-import { useAuth } from "hooks"
+import { useAuth, useRightPanel } from "hooks"
 
 const ENDPOINT = process.env.ENDPOINT as string
 const client = new GraphQLClient(ENDPOINT)
@@ -115,21 +115,12 @@ const usersReducer = (
 }
 const Message = styled.div`
   display: grid;
-  grid-template-columns: 50px auto;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  grid-template-columns: 48px auto;
+  padding: 8px 20px;
 
   transition: background 100ms ease-in-out;
   :hover {
     background: lightgrey;
-  }
-
-  > div:first-child {
-    display: flex;
-    justify-content: flex-end;
-  }
-  > div:nth-child(2) {
-    padding-left: 10px;
   }
 `
 const Img = styled.img`
@@ -157,9 +148,9 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
   }
 
   const { data, revalidate } = useSwr<QueryChannelAndMessagesResponse>(
-    QUERY_MESSAGES_BY_CHANNEL_QUERY + channelName,
-    () => {
-      return client.request(QUERY_MESSAGES_BY_CHANNEL_QUERY, { channelName })
+    [QUERY_MESSAGES_BY_CHANNEL_QUERY, channelName],
+    (query, cn) => {
+      return client.request(query, { channelName: cn })
     }
   )
 
@@ -192,6 +183,8 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
       )
   }, [data?.queryMessagesByChannel, messages])
 
+  const { handleSet } = useRightPanel()
+
   return (
     <SlackLayout title={channelName ?? "-"}>
       {(data?.queryMessagesByChannel ?? messages)
@@ -202,7 +195,10 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
         .map((message) => {
           const { PK, SK, body } = message
           return (
-            <Message key={`${PK}${SK}`}>
+            <Message
+              key={`${PK}${SK}`}
+              onClick={() => handleSet(message.username)}
+            >
               <div>
                 <Img src={users[message.username]?.avatarUrl}></Img>
               </div>
