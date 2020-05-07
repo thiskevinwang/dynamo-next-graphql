@@ -4,7 +4,7 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import styled from "styled-components"
 
-import { useAuth } from "hooks"
+import { useAuth, useRightPanel } from "hooks"
 import { RightPanel } from "components/RightPanel"
 import { ChannelList } from "components/ChannelList"
 import { LayoutContextProvider } from "context"
@@ -15,6 +15,7 @@ interface Props {
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
   const { token, handleLogout } = useAuth()
+  const { username } = useRightPanel()
 
   const mainRef = useRef<HTMLElement>(null)
   return (
@@ -66,7 +67,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           )}
         </ul>
       </header>
-      <ContentGrid>
+      <ContentGrid isRightPanelOpen={!!username}>
         <LeftSidebar>
           <Workspaces>
             <ul>
@@ -295,7 +296,7 @@ const RIGHT_MD = 350
 const RIGHT_LG = 400
 const RIGHT_XL = 430
 
-const ContentGrid = styled.div`
+const ContentGrid = styled.div<{ isRightPanelOpen: boolean }>`
   display: grid;
   overflow: hidden;
   grid-template-columns: 0px minmax(auto, 100vw) 0px;
@@ -305,23 +306,47 @@ const ContentGrid = styled.div`
   @media (min-width: 600px) {
     overflow: unset;
     grid-template-columns:
-      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_SM}px))
-      ${RIGHT_SM}px;
+      ${LEFT}px minmax(
+        100px,
+        calc(
+          100vw - ${LEFT}px -
+            ${(props) => (props.isRightPanelOpen ? RIGHT_SM : 0)}px
+        )
+      )
+      ${(props) => (props.isRightPanelOpen ? RIGHT_SM : 0)}px;
   }
   @media (min-width: 960px) {
     grid-template-columns:
-      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_MD}px))
-      ${RIGHT_MD}px;
+      ${LEFT}px minmax(
+        100px,
+        calc(
+          100vw - ${LEFT}px -
+            ${(props) => (props.isRightPanelOpen ? RIGHT_MD : 0)}px
+        )
+      )
+      ${(props) => (props.isRightPanelOpen ? RIGHT_MD : 0)}px;
   }
   @media (min-width: 1280px) {
     grid-template-columns:
-      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_MD}px))
-      ${RIGHT_LG}px;
+      ${LEFT}px minmax(
+        100px,
+        calc(
+          100vw - ${LEFT}px -
+            ${(props) => (props.isRightPanelOpen ? RIGHT_LG : 0)}px
+        )
+      )
+      ${(props) => (props.isRightPanelOpen ? RIGHT_LG : 0)}px;
   }
   @media (min-width: 1920px) {
     grid-template-columns:
-      ${LEFT}px minmax(100px, calc(100vw - ${LEFT}px - ${RIGHT_MD}px))
-      ${RIGHT_XL}px;
+      ${LEFT}px minmax(
+        100px,
+        calc(
+          100vw - ${LEFT}px -
+            ${(props) => (props.isRightPanelOpen ? RIGHT_XL : 0)}px
+        )
+      )
+      ${(props) => (props.isRightPanelOpen ? RIGHT_XL : 0)}px;
   }
 `
 
