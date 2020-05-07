@@ -1,4 +1,4 @@
-import { useReducer, useState, useEffect, FormEvent } from "react"
+import { Fragment, useReducer, useState, useEffect, FormEvent } from "react"
 import { NextPage, GetServerSideProps } from "next"
 import useSwr from "swr"
 import { GraphQLClient } from "graphql-request"
@@ -77,6 +77,28 @@ interface Message {
   body: string
   username: string
 }
+const Sticky = styled.div`
+  position: sticky;
+  top: 1.5rem;
+  transform: translateY(-50%);
+`
+const MessageListDayDivider = styled.div`
+  height: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const Day = styled.small`
+  font-weight: 500;
+  position: absolute;
+  border: 1px solid lightgrey;
+  border-radius: 24px;
+  height: 28px;
+  line-height: 27px;
+  padding: 0 16px;
+  background: white;
+  z-index: 5;
+`
 
 const InputContainer = styled.div`
   position: absolute;
@@ -113,6 +135,10 @@ const usersReducer = (
       return state
   }
 }
+const DateGroup = styled.div`
+  border-bottom: 1px solid lightgrey;
+  padding-bottom: 1rem;
+`
 const Message = styled.div`
   display: grid;
   grid-template-columns: 48px auto;
@@ -127,6 +153,8 @@ const Img = styled.img`
   height: 40px;
   width: 40px;
 `
+
+let initialDate = ``
 
 export default (({ channelName, queryMessagesByChannel: messages }) => {
   const { username, token } = useAuth()
@@ -185,35 +213,77 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
 
   const { handleSet } = useRightPanel()
 
+  /**
+   * to help generate parent <div>s for sticky date
+   */
+  const grouped = (data?.queryMessagesByChannel ?? messages)
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )
+    .reduce((group, i) => {
+      // Date Key & Display
+      const date = new Date(i.createdAt)
+
+      const weekday = DAYS[date.getDay()]
+      const month = MONTHS[date.getMonth()]
+      const day = date.getDate()
+
+      const c = `${weekday}, ${month} ${day}${nth(day)}`
+
+      if (Array.isArray(group[c])) {
+        group[c].push(i)
+      } else {
+        group[c] = [i]
+      }
+      return group
+    }, {} as { [date: string]: Message[] })
+
   return (
     <SlackLayout title={channelName ?? "-"}>
-      {(data?.queryMessagesByChannel ?? messages)
-        .sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      {Object.entries(grouped).map(([date, messages], i) => {
+        return (
+          <DateGroup key={`${date}${i}`}>
+            {messages.map((message) => {
+              const { PK, SK, body, username, createdAt } = message
+
+              const buildMessage = (
+                <Message key={`${PK}${SK}`} onClick={() => handleSet(username)}>
+                  <div>
+                    <Img src={users[username]?.avatarUrl}></Img>
+                  </div>
+                  <div>
+                    <b>{username}</b>&nbsp;
+                    <small>
+                      {new Date(createdAt as string).toLocaleTimeString(
+                        "en-US"
+                      )}
+                    </small>
+                    <div>{body}</div>
+                  </div>
+                </Message>
+              )
+
+              if (date !== initialDate) {
+                initialDate = date
+                return (
+                  <Fragment key={`${PK}${SK}${date}`}>
+                    <Sticky>
+                      <MessageListDayDivider>
+                        <Day>{date}</Day>
+                      </MessageListDayDivider>
+                    </Sticky>
+                    {buildMessage}
+                  </Fragment>
+                )
+              }
+
+              return buildMessage
+            })}
+          </DateGroup>
         )
-        .map((message) => {
-          const { PK, SK, body } = message
-          return (
-            <Message
-              key={`${PK}${SK}`}
-              onClick={() => handleSet(message.username)}
-            >
-              <div>
-                <Img src={users[message.username]?.avatarUrl}></Img>
-              </div>
-              <div>
-                <b>{message.username}</b>&nbsp;
-                <small>
-                  {new Date(message.createdAt as string).toLocaleTimeString(
-                    "en-US"
-                  )}
-                </small>
-                <div>{body}</div>
-              </div>
-            </Message>
-          )
-        })}
+      })}
+
       {username && (
         <InputContainer>
           <form onSubmit={handleSubmit}>
@@ -253,5 +323,42 @@ export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
       channelName: Array.isArray(channelName) ? channelName[0] : channelName,
       queryMessagesByChannel,
     },
+  }
+}
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+]
+const DAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+]
+const nth = function (d: number) {
+  if (d > 3 && d < 21) return "th"
+  switch (d % 10) {
+    case 1:
+      return "st"
+    case 2:
+      return "nd"
+    case 3:
+      return "rd"
+    default:
+      return "th"
   }
 }
