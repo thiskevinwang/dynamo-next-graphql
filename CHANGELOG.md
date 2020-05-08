@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.7.1] - 2020-05-07
+
+### Changes
+
+- Mimic Slack's Sticky Day Divider
+
+### Added
+
+- `RightPanelContext` & `useRightPanel` hook
+
+![image](https://user-images.githubusercontent.com/26389321/81364304-53575700-90b3-11ea-9dc5-a6f96e76c13d.png)
+
+### Changelog
+
+https://github.com/thiskevinwang/dynamo-next-graphql/compare/v0.7.0...v0.7.1
+
 ## [v0.7.0] - 2020-05-05
 
 Depends on https://github.com/thiskevinwang/dynamodb-graphql-server/releases/tag/v0.7.0

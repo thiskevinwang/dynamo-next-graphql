@@ -5,7 +5,7 @@ import { request } from "graphql-request"
 
 import { SlackLayout } from "components/SlackLayout"
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 const QUERY_PRODUCTS = `
 fragment Shared on Product {
   PK

@@ -1,13 +1,13 @@
-import { useState, FormEvent } from "react"
+import { Fragment, useReducer, useState, useEffect, FormEvent } from "react"
 import { NextPage, GetServerSideProps } from "next"
 import useSwr from "swr"
 import { GraphQLClient } from "graphql-request"
 import styled from "styled-components"
 
 import { SlackLayout } from "components/SlackLayout"
-import { useAuth } from "hooks"
+import { useAuth, useRightPanel } from "hooks"
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 const client = new GraphQLClient(ENDPOINT)
 
 const ROW_FRAGMENT = `
@@ -16,6 +16,20 @@ fragment Row on Row {
   SK
   createdAt
   updatedAt
+}
+`
+
+const GET_USER = `
+${ROW_FRAGMENT}
+query GetUser($username: String!, $email: String!) {
+  getUser(username: $username, email: $email) {
+    ...Row
+  firstName
+  lastName
+  username
+  email
+  avatarUrl
+  }
 }
 `
 
@@ -43,15 +57,48 @@ mutation CreateMessage(
   }
 }
 `
+interface User {
+  PK: string
+  SK: string
+  username?: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  createdAt?: string
+  updatedAt?: string
+  avatarUrl?: string
+}
 
 interface Message {
   PK: string
   SK: string
-  createdAt?: string
+  createdAt: string
   updatedAt?: string
   body: string
   username: string
 }
+const Sticky = styled.div`
+  position: sticky;
+  top: 1.5rem;
+  transform: translateY(-50%);
+`
+const MessageListDayDivider = styled.div`
+  height: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const Day = styled.small`
+  font-weight: 500;
+  position: absolute;
+  border: 1px solid lightgrey;
+  border-radius: 24px;
+  height: 28px;
+  line-height: 27px;
+  padding: 0 16px;
+  background: white;
+  z-index: 5;
+`
 
 const InputContainer = styled.div`
   position: absolute;
@@ -69,9 +116,45 @@ const InputContainer = styled.div`
   }
 `
 
-const Message = styled.div`
-  padding: 5px;
+enum UserActionType {
+  SET_USER = "SET_USER",
+}
+type UserAction = {
+  type: UserActionType
+  data: User
+  username: string
+}
+const usersReducer = (
+  state: { [username: string]: User },
+  action: UserAction
+) => {
+  switch (action.type) {
+    case UserActionType.SET_USER:
+      return { ...state, [action.username]: action.data }
+    default:
+      return state
+  }
+}
+const DateGroup = styled.div`
+  border-bottom: 1px solid lightgrey;
+  padding-bottom: 1rem;
 `
+const Message = styled.div`
+  display: grid;
+  grid-template-columns: 48px auto;
+  padding: 8px 20px;
+
+  transition: background 100ms ease-in-out;
+  :hover {
+    background: lightgrey;
+  }
+`
+const Img = styled.img`
+  height: 40px;
+  width: 40px;
+`
+
+let initialDate = ``
 
 export default (({ channelName, queryMessagesByChannel: messages }) => {
   const { username, token } = useAuth()
@@ -93,26 +176,114 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
   }
 
   const { data, revalidate } = useSwr<QueryChannelAndMessagesResponse>(
-    QUERY_MESSAGES_BY_CHANNEL_QUERY + channelName,
-    () => {
-      return client.request(QUERY_MESSAGES_BY_CHANNEL_QUERY, { channelName })
+    [QUERY_MESSAGES_BY_CHANNEL_QUERY, channelName],
+    (query, cn) => {
+      return client.request(query, { channelName: cn })
     }
   )
 
+  /**
+   * do extra client-side fetching for users.
+   * - message only have username, and no avatarUrl
+   */
+  const [users, dispatch] = useReducer(usersReducer, {})
+  useEffect(() => {
+    ;(data?.queryMessagesByChannel ?? messages)
+      .reduce((prev, curr) => {
+        if (!prev.includes(curr.username)) {
+          prev.push(curr.username)
+        }
+        return prev
+      }, [] as string[])
+      .map((username) =>
+        client
+          .request<{ getUser: User }>(GET_USER, {
+            username,
+            email: "TODO_THIS_IS_NOT_USED",
+          })
+          .then(({ getUser: u }) => {
+            dispatch({
+              type: UserActionType.SET_USER,
+              username: u.username as string,
+              data: u,
+            })
+          })
+      )
+  }, [data?.queryMessagesByChannel, messages])
+
+  const { handleSet } = useRightPanel()
+
+  /**
+   * to help generate parent <div>s for sticky date
+   */
+  const grouped = (data?.queryMessagesByChannel ?? messages)
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )
+    .reduce((group, i) => {
+      // Date Key & Display
+      const date = new Date(i.createdAt)
+
+      const weekday = DAYS[date.getDay()]
+      const month = MONTHS[date.getMonth()]
+      const day = date.getDate()
+
+      const c = `${weekday}, ${month} ${day}${nth(day)}`
+
+      if (Array.isArray(group[c])) {
+        group[c].push(i)
+      } else {
+        group[c] = [i]
+      }
+      return group
+    }, {} as { [date: string]: Message[] })
+
   return (
     <SlackLayout title={channelName ?? "-"}>
-      {(data?.queryMessagesByChannel ?? messages).map((message) => {
-        const { PK, SK, body } = message
+      {Object.entries(grouped).map(([date, messages], i) => {
         return (
-          <Message key={`${PK}${SK}`}>
-            <div>
-              <b>{message.username}</b>
-              <small>{message.createdAt}</small>
-            </div>
-            <div>{body}</div>
-          </Message>
+          <DateGroup key={`${date}${i}`}>
+            {messages.map((message) => {
+              const { PK, SK, body, username, createdAt } = message
+
+              const buildMessage = (
+                <Message key={`${PK}${SK}`} onClick={() => handleSet(username)}>
+                  <div>
+                    <Img src={users[username]?.avatarUrl}></Img>
+                  </div>
+                  <div>
+                    <b>{username}</b>&nbsp;
+                    <small>
+                      {new Date(createdAt as string).toLocaleTimeString(
+                        "en-US"
+                      )}
+                    </small>
+                    <div>{body}</div>
+                  </div>
+                </Message>
+              )
+
+              if (date !== initialDate) {
+                initialDate = date
+                return (
+                  <Fragment key={`${PK}${SK}${date}`}>
+                    <Sticky>
+                      <MessageListDayDivider>
+                        <Day>{date}</Day>
+                      </MessageListDayDivider>
+                    </Sticky>
+                    {buildMessage}
+                  </Fragment>
+                )
+              }
+
+              return buildMessage
+            })}
+          </DateGroup>
         )
       })}
+
       {username && (
         <InputContainer>
           <form onSubmit={handleSubmit}>
@@ -152,5 +323,42 @@ export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
       channelName: Array.isArray(channelName) ? channelName[0] : channelName,
       queryMessagesByChannel,
     },
+  }
+}
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+]
+const DAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+]
+const nth = function (d: number) {
+  if (d > 3 && d < 21) return "th"
+  switch (d % 10) {
+    case 1:
+      return "st"
+    case 2:
+      return "nd"
+    case 3:
+      return "rd"
+    default:
+      return "th"
   }
 }

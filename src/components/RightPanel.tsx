@@ -3,7 +3,9 @@ import styled from "styled-components"
 import useSwr from "swr"
 import { request } from "graphql-request"
 
-const ENDPOINT = "http://localhost:4000"
+import { useRightPanel } from "hooks"
+
+const ENDPOINT = process.env.ENDPOINT as string
 const GET_USER_QUERY = `
 query GetUser($username: String!, $email: String!) {
   getUser(username: $username, email: $email) {
@@ -32,17 +34,17 @@ interface User {
 
 const Top = styled.div`
   display: flex;
+  justify-content: space-between;
+
   align-items: center;
+  padding: 0 12px 0 16px;
   border-bottom: 1px solid lightgrey;
   height: 64px;
-  span {
-    padding: 1rem;
-  }
 `
 const Body = styled.div`
   img {
     max-width: 100%;
-
+    width: 100%;
     background: lightgrey;
   }
   dd {
@@ -50,26 +52,33 @@ const Body = styled.div`
     text-align: center;
   }
 `
-interface Props {
-  email: string
-  username: string
-}
-export const RightPanel: FC<Props> = ({ email, username }) => {
-  const { data } = useSwr<{ getUser: User }>(GET_USER_QUERY, (query) =>
-    request(ENDPOINT, query, { email, username })
+
+export const RightPanel: FC = () => {
+  const { username, handleClear } = useRightPanel()
+  const { data } = useSwr<{ getUser: User }>(
+    username ? [GET_USER_QUERY, username] : null,
+    (query, un) => {
+      return request(ENDPOINT, query, {
+        email: "TODO_THIS_DOES_NOTHING",
+        username: un,
+      })
+    }
   )
 
   return (
     <>
       <Top>
         <span>Details</span>
+        {username && <button onClick={handleClear}>X</button>}
       </Top>
-      <Body>
-        <img src={data?.getUser.avatarUrl} alt="user avatar" />
-        <dd>
-          <h1>{data?.getUser.username}</h1>
-        </dd>
-      </Body>
+      {username && data && (
+        <Body>
+          <img src={data?.getUser.avatarUrl} alt="user avatar" />
+          <dd>
+            <h1>{data?.getUser.username}</h1>
+          </dd>
+        </Body>
+      )}
     </>
   )
 }

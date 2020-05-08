@@ -11,7 +11,7 @@ const Card = styled.div`
   display: block;
 `
 
-const ENDPOINT = "http://localhost:4000"
+const ENDPOINT = process.env.ENDPOINT as string
 const QUERY_VOTES_BY_EMAIL = `
 query QueryVotesByEmail($email: String) {
   queryVotesByEmail(email: $email) {
