@@ -16,18 +16,14 @@ interface ColorSchemeContextShape extends State {
 }
 
 export const ColorSchemeContext = createContext<ColorSchemeContextShape>({
-  mode: Mode.DEFAULT,
+  mode: Mode.AUBERGINE,
   setColorContext: () => null,
 })
 
-const reducer = (state: State, action: Action) => {
+const reducer = (_state: State, action: Action) => {
   switch (action.type) {
-    case Mode.DEFAULT:
-      return { mode: Mode.DEFAULT }
-    case Mode.DARK:
-      return { mode: Mode.DARK }
     default:
-      return state
+      return { mode: action.type }
   }
 }
 
@@ -35,22 +31,29 @@ export const ColorSchemeProvider: FC = ({ children }) => {
   const prefersDark = useMediaQuery("(prefers-color-scheme: dark)")
 
   const [{ mode }, dispatch] = useReducer(reducer, {
-    mode: prefersDark ? Mode.DARK : Mode.DEFAULT,
+    mode: prefersDark ? Mode.AUBERGINE_DARK : Mode.AUBERGINE,
   })
   const setColorContext = (mode: Mode) => dispatch({ type: mode })
 
   // useEffect(() => {
-  //   dispatch({ type: prefersDark ? Mode.DARK : Mode.DEFAULT })
+  //   dispatch({ type: prefersDark ? Mode.AUBERGINE_DARK : Mode.AUBERGINE })
   // }, [prefersDark])
 
+  const modes = Object.values(Mode)
+  const length = modes.length
+  // console.log("modes", modes)
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.ctrlKey) {
-        console.log(mode)
+        // console.log(mode)
+        const currIndex = modes.indexOf(mode)
+        const nextIndex = currIndex + 1 === length ? 0 : currIndex + 1
+        // console.log("curr", currIndex, "next", nextIndex)
+
         switch (e.keyCode) {
           case 68 /** "d" */:
             return dispatch({
-              type: mode === Mode.DEFAULT ? Mode.DARK : Mode.DEFAULT,
+              type: modes[nextIndex],
             })
           default:
             return
@@ -64,7 +67,7 @@ export const ColorSchemeProvider: FC = ({ children }) => {
     return () => {
       window.removeEventListener("keyup", handleKeyUp)
     }
-  }, [dispatch, mode])
+  }, [dispatch, mode, modes, length])
 
   return (
     <ColorSchemeContext.Provider value={{ mode, setColorContext }}>
