@@ -3,11 +3,12 @@ import useSwr from "swr"
 import { request } from "graphql-request"
 
 import { LinkActive } from "components/LinkActive"
+import { useTeams, useAuth } from "hooks"
 
 const ENDPOINT = process.env.ENDPOINT as string
-const QUERY_CHANNELS_QUERY = `
-query QueryChannels {
-  queryChannels {
+const QUERY_TEAM_CHANNELS_QUERY = `
+query QueryTeamChannels($teamName: String!) {
+  queryTeamChannels(teamName: $teamName) {
     PK
     SK
     channelName
@@ -15,7 +16,7 @@ query QueryChannels {
 }
 `
 interface QueryChannelsResponse {
-  queryChannels: {
+  queryTeamChannels: {
     PK: string
     SK: string
     channelName: string
@@ -23,22 +24,25 @@ interface QueryChannelsResponse {
 }
 
 export const ChannelList = () => {
+  const { teamName } = useTeams()
+  const { username } = useAuth()
   const { data } = useSwr<QueryChannelsResponse>(
-    QUERY_CHANNELS_QUERY,
-    (query) => request(ENDPOINT, query)
+    [QUERY_TEAM_CHANNELS_QUERY, teamName],
+    (query) => request(ENDPOINT, query, { teamName })
   )
+
   return (
     <Container>
       <details open>
         <summary>Channels</summary>
         <ul>
-          {data?.queryChannels.map((channel) => {
+          {data?.queryTeamChannels?.map((channel) => {
             const { PK, SK, channelName } = channel
             return (
               <LinkActive
                 key={`${PK}${SK}`}
-                href={"/channels/[channelName]"}
-                as={`/channels/${channelName}`}
+                href={"/[teamName]/[channelName]/user_profile/[userId]"}
+                as={`/${teamName}/${channelName}/user_profile/${username}`}
               >
                 # {channelName}
               </LinkActive>
@@ -51,6 +55,8 @@ export const ChannelList = () => {
 }
 
 const Container = styled.div`
+  white-space: nowrap;
+
   padding-top: 10px;
   padding-bottom: 10px;
   summary {
