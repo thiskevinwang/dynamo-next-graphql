@@ -1,13 +1,13 @@
 import { AppProps } from "next/app"
 import Head from "next/head"
 import Router from "next/router"
-import { createGlobalStyle } from "styled-components"
+import { createGlobalStyle, BaseProps } from "styled-components"
 
 import "../../_CerealFont.css"
 import "../../_FiraCodeFont.css"
 import "../../_global.css"
 
-import { AuthProvider, RightPanelProvider } from "context"
+import { AuthProvider, ColorSchemeProvider, RightPanelProvider } from "context"
 /**
  * Optional
  * @see https://github.com/zeit/next.js/blob/canary/examples/with-loading/pages/_app.js
@@ -24,13 +24,22 @@ Router.events.on("routeChangeError", () => {})
  */
 const GlobalStyle = createGlobalStyle`
   body {
+    background: ${(p: BaseProps) => p.theme.background};
+    color: ${(p: BaseProps) => p.theme.text};
     margin: 0;
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+      background: ${(p: BaseProps) => p.theme.muted};
   }
 `
 
 const __next = ({ Component, pageProps }: AppProps) => {
   return (
-    <>
+    <ColorSchemeProvider>
       <GlobalStyle />
       <Head>
         <></>
@@ -40,7 +49,7 @@ const __next = ({ Component, pageProps }: AppProps) => {
           <Component {...pageProps} />
         </RightPanelProvider>
       </AuthProvider>
-    </>
+    </ColorSchemeProvider>
   )
 }
 

@@ -2,11 +2,12 @@ import React, { useRef } from "react"
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
-import styled from "styled-components"
+import styled, { BaseProps } from "styled-components"
 
 import { useAuth, useRightPanel } from "hooks"
 import { RightPanel } from "components/RightPanel"
 import { ChannelList } from "components/ChannelList"
+import { LinkActive } from "components/LinkActive"
 import { LayoutContextProvider } from "context"
 
 interface Props {
@@ -93,75 +94,57 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             <Lists>
               <NavList>
                 <ul>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/all_unreads"}
-                    >
-                      <a>All Unreads</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/threads"}
-                    >
-                      <a>Threads</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/mentions_and_reactions"}
-                    >
-                      <a>Mentions & reactions</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/drafts"}
-                    >
-                      <a>Drafts</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/saved_items"}
-                    >
-                      <a>Saved items</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/people"}
-                    >
-                      <a>People</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/apps"}
-                    >
-                      <a>Apps</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"/channels/[channelName]"}
-                      as={"/channels/files"}
-                    >
-                      <a>Files</a>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={"/"}>
-                      <a>Show less</a>
-                    </Link>
-                  </li>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/all_unreads"}
+                  >
+                    All Unreads
+                  </LinkActive>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/threads"}
+                  >
+                    Threads
+                  </LinkActive>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/mentions_and_reactions"}
+                  >
+                    Mentions & reactions
+                  </LinkActive>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/drafts"}
+                  >
+                    Drafts
+                  </LinkActive>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/saved_items"}
+                  >
+                    Saved items
+                  </LinkActive>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/people"}
+                  >
+                    People
+                  </LinkActive>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/apps"}
+                  >
+                    Apps
+                  </LinkActive>
+                  <LinkActive
+                    href={"/channels/[channelName]"}
+                    as={"/channels/files"}
+                  >
+                    Files
+                  </LinkActive>
+                  <LinkActive href={"/"} as={"/"}>
+                    Show less
+                  </LinkActive>
                 </ul>
               </NavList>
 
@@ -192,6 +175,12 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   )
 }
 const LeftSidebar = styled.div`
+  background: ${(p: BaseProps) => p.theme.backgroundSidebar};
+  color: ${(p: BaseProps) => p.theme.textSecondary};
+  a {
+    /* color: ${(p: BaseProps) => p.theme.textSecondary}; */
+  }
+
   display: grid;
   grid-template-columns: 0px 0px;
   overflow: hidden;
@@ -209,11 +198,11 @@ const LeftSidebar = styled.div`
   }
 `
 const RightSidebar = styled.aside`
-  border-left: 1px solid lightgrey;
+  border-left: 1px solid ${(p: BaseProps) => p.theme.muted};
 `
 
 const Workspaces = styled.div`
-  border-right: 1px solid lightgrey;
+  border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   ul {
     display: flex;
     flex-direction: column;
@@ -234,18 +223,19 @@ const WorkspaceIcon = styled.div`
   line-height: 0.6;
   width: 30px;
   height: 30px;
-  border: 1px solid lightgrey;
+  border: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   border-radius: 5px;
 `
 const ChannelsContainer = styled.div`
-  border-right: 1px solid lightgrey;
+  border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
 `
 const SidebarTop = styled.div`
-  border-bottom: 1px solid lightgrey;
+  background: ${(p: BaseProps) => p.theme.backgroundSidebar};
+  border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   height: 64px;
 `
 const NavList = styled.div`
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   padding-top: 10px;
   padding-bottom: 10px;
 
@@ -272,10 +262,17 @@ const Styles = styled.div`
   grid-template-rows: 38px auto min-content;
 
   .header {
+    /* theme */
+    background: ${(p: BaseProps) => p.theme.topNav};
+    a {
+      color: ${(p: BaseProps) => p.theme.textSecondary};
+    }
+    /* theme */
+
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
 
     ul {
       padding: 0;
@@ -290,7 +287,7 @@ const Styles = styled.div`
   }
 `
 
-const LEFT = 220
+const LEFT = 250
 const RIGHT_SM = 280
 const RIGHT_MD = 350
 const RIGHT_LG = 400
@@ -355,7 +352,7 @@ const Content = styled.div`
   > header {
     display: flex;
     height: 64px;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 1px solid ${(p: BaseProps) => p.theme.muted};
     overflow: hidden;
 
     div {
