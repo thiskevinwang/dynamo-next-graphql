@@ -1,4 +1,28 @@
-import { useReducer, createContext } from "react"
+import { useEffect, useReducer, createContext } from "react"
+import { GraphQLClient } from "graphql-request"
+
+const ENDPOINT = process.env.ENDPOINT as string
+
+const QUERY_TEAMS_QUERY = `
+query QueryTeams {
+  queryTeams {
+    PK
+    SK
+    createdAt
+    updatedAt
+    teamName
+  }
+}
+`
+type Response = {
+  queryTeams: {
+    PK: string
+    SK: string
+    createdAt: string
+    updatedAt: string
+    teamName: string
+  }[]
+}
 
 interface TeamsState {
   teamName?: string
@@ -44,9 +68,11 @@ const teamsReducer = (state: TeamsState, action: TeamsAction) => {
 }
 
 export const TeamsProvider: React.FC = ({ children }) => {
+  const client = new GraphQLClient(ENDPOINT)
+
   const [{ teamName, availableTeams }, dispatch] = useReducer(teamsReducer, {
     teamName: "testspace",
-    availableTeams: ["MagicPonyLand", "testplace", "testspace"],
+    availableTeams: [],
   })
 
   const handleSetTeam: TeamsContextShape["handleSetTeam"] = (teamName) => {
@@ -57,6 +83,15 @@ export const TeamsProvider: React.FC = ({ children }) => {
   ) => {
     return dispatch({ type: TeamsEnum.UPDATE_TEAMS, availableTeams })
   }
+
+  useEffect(() => {
+    client.request<Response>(QUERY_TEAMS_QUERY).then(({ queryTeams }) => {
+      const teamNames: string[] = queryTeams.reduce((list, next) => {
+        return [...list, next.teamName]
+      }, [] as any[])
+      handleUpdateTeams(teamNames)
+    })
+  }, [])
 
   return (
     <TeamsContext.Provider
