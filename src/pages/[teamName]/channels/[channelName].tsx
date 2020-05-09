@@ -33,10 +33,10 @@ query GetUser($username: String!, $email: String!) {
 }
 `
 
-const QUERY_MESSAGES_BY_CHANNEL_QUERY = `
+const QUERY_MESSAGES_QUERY = `
 ${ROW_FRAGMENT}
-query QueryChannelAndMessages($channelName: String!) {
-  queryMessagesByChannel(channelName: $channelName) {
+query QueryMessages($teamName: String!, $channelName: String!) {
+  queryMessages(teamName: $teamName, channelName: $channelName) {
     ...Row
     body
     username
@@ -47,11 +47,17 @@ query QueryChannelAndMessages($channelName: String!) {
 const CREATE_MESSAGE_MUTATION = `
 ${ROW_FRAGMENT}
 mutation CreateMessage(
+  $teamName: String!
   $channelName: String!
   $username: String!
   $body: String!
 ) {
-  createMessage(channelName: $channelName, username: $username, body: $body) {
+  createMessage(
+    teamName: $teamName
+    channelName: $channelName
+    username: $username
+    body: $body
+  ) {
     ...Row
     body
   }
@@ -75,6 +81,8 @@ interface Message {
   createdAt: string
   updatedAt?: string
   body: string
+  teamName: string
+  channelName: string
   username: string
 }
 const Sticky = styled.div`
@@ -160,7 +168,7 @@ const SmallDate = styled.small`
 
 let initialDate = ``
 
-export default (({ channelName, queryMessagesByChannel: messages }) => {
+export default (({ channelName, queryMessages: messages }) => {
   const { username, token } = useAuth()
   const [body, setBody] = useState("")
 
@@ -179,8 +187,8 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
       })
   }
 
-  const { data, revalidate } = useSwr<QueryChannelAndMessagesResponse>(
-    [QUERY_MESSAGES_BY_CHANNEL_QUERY, channelName],
+  const { data, revalidate } = useSwr<QueryMessagesResponse>(
+    [QUERY_MESSAGES_QUERY, channelName],
     (query, cn) => {
       return client.request(query, { channelName: cn })
     }
@@ -192,7 +200,7 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
    */
   const [users, dispatch] = useReducer(usersReducer, {})
   useEffect(() => {
-    ;(data?.queryMessagesByChannel ?? messages)
+    ;(data?.queryMessages ?? messages)
       .reduce((prev, curr) => {
         if (!prev.includes(curr.username)) {
           prev.push(curr.username)
@@ -213,14 +221,14 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
             })
           })
       )
-  }, [data?.queryMessagesByChannel, messages])
+  }, [data?.queryMessages, messages])
 
   const { handleSet } = useRightPanel()
 
   /**
    * to help generate parent <div>s for sticky date
    */
-  const grouped = (data?.queryMessagesByChannel ?? messages)
+  const grouped = (data?.queryMessages ?? messages)
     .sort(
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -304,28 +312,31 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
   )
 }) as NextPage<SSRProps>
 
-interface QueryChannelAndMessagesResponse {
-  queryMessagesByChannel: Message[]
+interface QueryMessagesResponse {
+  queryMessages: Message[]
 }
-interface SSRProps extends QueryChannelAndMessagesResponse {
+interface SSRProps extends QueryMessagesResponse {
   channelName?: string
 }
 
 export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
   query,
 }) => {
-  const { channelName } = query
+  const { teamName, channelName } = query
 
-  const { queryMessagesByChannel } = await client.request<
-    QueryChannelAndMessagesResponse
-  >(QUERY_MESSAGES_BY_CHANNEL_QUERY, {
-    channelName,
-  })
+  const { queryMessages } = await client.request<QueryMessagesResponse>(
+    QUERY_MESSAGES_QUERY,
+    {
+      teamName,
+      channelName,
+    }
+  )
 
   return {
     props: {
+      teamName: Array.isArray(teamName) ? teamName[0] : teamName,
       channelName: Array.isArray(channelName) ? channelName[0] : channelName,
-      queryMessagesByChannel,
+      queryMessages,
     },
   }
 }
