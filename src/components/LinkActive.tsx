@@ -19,6 +19,9 @@ const ActiveLi = styled.li<LinkLiProps>`
         : p.theme.backgroundSidebarHover};
   }
 `
+const A = styled.a`
+  text-decoration: none;
+`
 
 export const LinkActive: FC<LinkProps> = ({ children, href, as, ...props }) => {
   const router = useRouter()
@@ -29,7 +32,9 @@ export const LinkActive: FC<LinkProps> = ({ children, href, as, ...props }) => {
 
   return (
     <Link href={href} as={as} {...props}>
-      <ActiveLi isActive={isActive}>{children}</ActiveLi>
+      <A>
+        <ActiveLi isActive={isActive}>{children}</ActiveLi>
+      </A>
     </Link>
   )
 }
