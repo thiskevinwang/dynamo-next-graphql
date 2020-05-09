@@ -216,15 +216,46 @@ const TeamsColumn = styled.div`
   }
 `
 const TeamIcon = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 0.6;
+  font-weight: 700;
   width: 30px;
   height: 30px;
-  border: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
-  border-radius: 5px;
+  user-select: none;
+  cursor: pointer;
+
+  /**
+   * border that doesn't affect width:
+   * - use outline or psuedo-element
+   * @see https://stackoverflow.com/a/11426967/9823455
+   */
+  :after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+
+    border-color: ${(p: BaseProps) => p.theme.borderSidebar};
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+
+    transition: all 100ms ease-in-out;
+  }
+  :hover:after {
+    border-width: 3px;
+    top: -3px;
+    bottom: -3px;
+    left: -3px;
+    right: -3px;
+  }
 `
 const ChannelsContainer = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
