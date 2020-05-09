@@ -27,6 +27,7 @@ interface TeamsContextShape extends TeamsState {
 
 export const TeamsContext = createContext<TeamsContextShape>({
   teamName: undefined,
+  availableTeams: undefined,
   handleSetTeam: () => ({}),
   handleUpdateTeams: () => ({}),
 })
@@ -43,7 +44,10 @@ const teamsReducer = (state: TeamsState, action: TeamsAction) => {
 }
 
 export const TeamsProvider: React.FC = ({ children }) => {
-  const [{ teamName, availableTeams }, dispatch] = useReducer(teamsReducer, {})
+  const [{ teamName, availableTeams }, dispatch] = useReducer(teamsReducer, {
+    teamName: undefined,
+    availableTeams: [],
+  })
 
   const handleSetTeam: TeamsContextShape["handleSetTeam"] = (teamName) => {
     return dispatch({ type: TeamsEnum.SET_TEAM, teamName })
