@@ -45,8 +45,8 @@ const teamsReducer = (state: TeamsState, action: TeamsAction) => {
 
 export const TeamsProvider: React.FC = ({ children }) => {
   const [{ teamName, availableTeams }, dispatch] = useReducer(teamsReducer, {
-    teamName: undefined,
-    availableTeams: [],
+    teamName: "testspace",
+    availableTeams: ["MagicPonyLand", "testplace", "testspace"],
   })
 
   const handleSetTeam: TeamsContextShape["handleSetTeam"] = (teamName) => {
