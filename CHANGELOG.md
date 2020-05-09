@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.7.2] - 2020-05-09
+
+### Added
+
+- `styled-theming`
+- `@types/styled-theming`
+- Slack themes (Light & Dark)
+  - Aubergine
+  - Ochin
+  - Mood Indigo
+- Added `<LinkActive>` component for active URL path styling
+
+### Changes
+
+![gif](https://user-images.githubusercontent.com/26389321/81464409-938c0780-918f-11ea-909e-b33ea7407d50.gif)
+
+### Changelog
+
+https://github.com/thiskevinwang/dynamo-next-graphql/compare/v0.7.1...v0.7.2
+
 ## [v0.7.1] - 2020-05-07
 
 ### Changes
