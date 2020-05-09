@@ -2,7 +2,7 @@ import { Fragment, useReducer, useState, useEffect, FormEvent } from "react"
 import { NextPage, GetServerSideProps } from "next"
 import useSwr from "swr"
 import { GraphQLClient } from "graphql-request"
-import styled from "styled-components"
+import styled, { BaseProps } from "styled-components"
 
 import { SlackLayout } from "components/SlackLayout"
 import { useAuth, useRightPanel } from "hooks"
@@ -91,12 +91,12 @@ const MessageListDayDivider = styled.div`
 const Day = styled.small`
   font-weight: 500;
   position: absolute;
-  border: 1px solid lightgrey;
+  border: 1px solid ${(p: BaseProps) => p.theme.muted};
   border-radius: 24px;
   height: 28px;
   line-height: 27px;
   padding: 0 16px;
-  background: white;
+  background: ${(p: BaseProps) => p.theme.background};
   z-index: 5;
 `
 
@@ -136,7 +136,7 @@ const usersReducer = (
   }
 }
 const DateGroup = styled.div`
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid ${(p: BaseProps) => p.theme.muted};
   padding-bottom: 1rem;
 `
 const Message = styled.div`
@@ -146,12 +146,16 @@ const Message = styled.div`
 
   transition: background 100ms ease-in-out;
   :hover {
-    background: lightgrey;
+    background: ${(p: BaseProps) => p.theme.muted};
   }
 `
 const Img = styled.img`
   height: 40px;
   width: 40px;
+`
+
+const SmallDate = styled.small`
+  color: ${(p: BaseProps) => p.theme.textTime};
 `
 
 let initialDate = ``
@@ -254,11 +258,11 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
                   </div>
                   <div>
                     <b>{username}</b>&nbsp;
-                    <small>
+                    <SmallDate>
                       {new Date(createdAt as string).toLocaleTimeString(
                         "en-US"
                       )}
-                    </small>
+                    </SmallDate>
                     <div>{body}</div>
                   </div>
                 </Message>

@@ -1,7 +1,8 @@
-import Link from "next/link"
 import styled from "styled-components"
 import useSwr from "swr"
 import { request } from "graphql-request"
+
+import { LinkActive } from "components/LinkActive"
 
 const ENDPOINT = process.env.ENDPOINT as string
 const QUERY_CHANNELS_QUERY = `
@@ -34,14 +35,13 @@ export const ChannelList = () => {
           {data?.queryChannels.map((channel) => {
             const { PK, SK, channelName } = channel
             return (
-              <li key={`${PK}${SK}`}>
-                <Link
-                  href={"/channels/[channelName]"}
-                  as={`/channels/${channelName}`}
-                >
-                  <a># {channelName}</a>
-                </Link>
-              </li>
+              <LinkActive
+                key={`${PK}${SK}`}
+                href={"/channels/[channelName]"}
+                as={`/channels/${channelName}`}
+              >
+                # {channelName}
+              </LinkActive>
             )
           })}
         </ul>
