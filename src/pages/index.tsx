@@ -1,6 +1,8 @@
 import { NextPage } from "next"
 import { SlackLayout } from "components/SlackLayout"
 
-export default (() => {
+const Home: NextPage = () => {
   return <SlackLayout title={"Home"}></SlackLayout>
-}) as NextPage
+}
+
+export default Home
