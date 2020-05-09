@@ -1,34 +1,3 @@
-// import { NextPage, GetServerSideProps } from "next"
-// import { SlackLayout } from "components/SlackLayout"
-
-// const Channel: NextPage<SSRProps> = ({ teamName, channelName, userId }) => {
-//   return (
-//     <SlackLayout title={"User"}>
-//       <div>teamName: {teamName}</div>
-//       <div>channelName: {channelName}</div>
-//       <div>userId: {userId}</div>
-//     </SlackLayout>
-//   )
-// }
-
-// interface SSRProps {
-//   teamName?: string | string[]
-//   channelName?: string | string[]
-//   userId?: string | string[]
-// }
-
-// export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
-//   query,
-// }) => {
-//   const { teamName, channelName, userId } = query
-
-//   return {
-//     props: { teamName, channelName, userId },
-//   }
-// }
-
-// export default Team
-
 import { Fragment, useReducer, useState, useEffect, FormEvent } from "react"
 import { NextPage, GetServerSideProps } from "next"
 import useSwr from "swr"
@@ -36,7 +5,7 @@ import { GraphQLClient } from "graphql-request"
 import styled, { BaseProps } from "styled-components"
 
 import { SlackLayout } from "components/SlackLayout"
-import { useAuth, useRightPanel } from "hooks"
+import { useAuth, useRightPanel, useTeams } from "hooks"
 
 const ENDPOINT = process.env.ENDPOINT as string
 const client = new GraphQLClient(ENDPOINT)
@@ -64,10 +33,10 @@ query GetUser($username: String!, $email: String!) {
 }
 `
 
-const QUERY_MESSAGES_BY_CHANNEL_QUERY = `
+const QUERY_MESSAGES_QUERY = `
 ${ROW_FRAGMENT}
-query QueryChannelAndMessages($channelName: String!) {
-  queryMessagesByChannel(channelName: $channelName) {
+query QueryMessages($teamName: String!, $channelName: String!) {
+  queryMessages(teamName: $teamName, channelName: $channelName) {
     ...Row
     body
     username
@@ -78,11 +47,17 @@ query QueryChannelAndMessages($channelName: String!) {
 const CREATE_MESSAGE_MUTATION = `
 ${ROW_FRAGMENT}
 mutation CreateMessage(
+  $teamName: String!
   $channelName: String!
   $username: String!
   $body: String!
 ) {
-  createMessage(channelName: $channelName, username: $username, body: $body) {
+  createMessage(
+    teamName: $teamName
+    channelName: $channelName
+    username: $username
+    body: $body
+  ) {
     ...Row
     body
   }
@@ -106,6 +81,8 @@ interface Message {
   createdAt: string
   updatedAt?: string
   body: string
+  teamName: string
+  channelName: string
   username: string
 }
 const Sticky = styled.div`
@@ -193,7 +170,7 @@ let initialDate = ``
 
 const Channel: NextPage<SSRProps> = ({
   channelName,
-  queryMessagesByChannel: messages,
+  queryMessages: messages,
   /**
    * @todo teamName and userId aren't used yet.
    */
@@ -202,12 +179,14 @@ const Channel: NextPage<SSRProps> = ({
 }) => {
   const { username, token } = useAuth()
   const [body, setBody] = useState("")
+  const { teamName } = useTeams()
 
   client.setHeader("Authorization", `Bearer ${token}`)
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     client
       .request(CREATE_MESSAGE_MUTATION, {
+        teamName,
         channelName,
         username,
         body,
@@ -219,9 +198,9 @@ const Channel: NextPage<SSRProps> = ({
   }
 
   const { data, revalidate } = useSwr<QueryChannelAndMessagesResponse>(
-    [QUERY_MESSAGES_BY_CHANNEL_QUERY, channelName],
-    (query, cn) => {
-      return client.request(query, { channelName: cn })
+    [QUERY_MESSAGES_QUERY, teamName, channelName],
+    (query, tn, cn) => {
+      return client.request(query, { teamName: tn, channelName: cn })
     }
   )
 
@@ -231,7 +210,7 @@ const Channel: NextPage<SSRProps> = ({
    */
   const [users, dispatch] = useReducer(usersReducer, {})
   useEffect(() => {
-    ;(data?.queryMessagesByChannel ?? messages)
+    ;(data?.queryMessages ?? messages)
       .reduce((prev, curr) => {
         if (!prev.includes(curr.username)) {
           prev.push(curr.username)
@@ -252,14 +231,14 @@ const Channel: NextPage<SSRProps> = ({
             })
           })
       )
-  }, [data?.queryMessagesByChannel, messages])
+  }, [data?.queryMessages, messages])
 
   const { handleSet } = useRightPanel()
 
   /**
    * to help generate parent <div>s for sticky date
    */
-  const grouped = (data?.queryMessagesByChannel ?? messages)
+  const grouped = (data?.queryMessages ?? messages)
     .sort(
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -346,7 +325,7 @@ const Channel: NextPage<SSRProps> = ({
 export default Channel
 
 interface QueryChannelAndMessagesResponse {
-  queryMessagesByChannel: Message[]
+  queryMessages: Message[]
 }
 interface SSRProps extends QueryChannelAndMessagesResponse {
   teamName?: string
@@ -359,9 +338,10 @@ export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
 }) => {
   const { teamName, channelName, userId } = query
 
-  const { queryMessagesByChannel } = await client.request<
+  const { queryMessages } = await client.request<
     QueryChannelAndMessagesResponse
-  >(QUERY_MESSAGES_BY_CHANNEL_QUERY, {
+  >(QUERY_MESSAGES_QUERY, {
+    teamName,
     channelName,
   })
 
@@ -370,7 +350,7 @@ export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
       teamName: Array.isArray(teamName) ? teamName[0] : teamName,
       channelName: Array.isArray(channelName) ? channelName[0] : channelName,
       userId: Array.isArray(userId) ? userId[0] : userId,
-      queryMessagesByChannel,
+      queryMessages,
     },
   }
 }
