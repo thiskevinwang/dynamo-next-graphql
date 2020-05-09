@@ -70,25 +70,25 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
       </header>
       <ContentGrid isRightPanelOpen={!!username}>
         <LeftSidebar>
-          <Workspaces>
+          <TeamsColumn>
             <ul>
               <li>
-                <WorkspaceIcon>&nbsp;😀</WorkspaceIcon>
+                <TeamIcon>&nbsp;😀</TeamIcon>
               </li>
               <li>
-                <WorkspaceIcon>&nbsp;😊</WorkspaceIcon>
+                <TeamIcon>&nbsp;😊</TeamIcon>
               </li>
               <li>
-                <WorkspaceIcon>&nbsp;😇</WorkspaceIcon>
+                <TeamIcon>&nbsp;😇</TeamIcon>
               </li>
               <li>
-                <WorkspaceIcon>&nbsp;🤨</WorkspaceIcon>
+                <TeamIcon>&nbsp;🤨</TeamIcon>
               </li>
               <li>
-                <WorkspaceIcon>&nbsp;🥱</WorkspaceIcon>
+                <TeamIcon>&nbsp;🥱</TeamIcon>
               </li>
             </ul>
-          </Workspaces>
+          </TeamsColumn>
           <ChannelsContainer>
             <SidebarTop></SidebarTop>
             <Lists>
@@ -201,7 +201,7 @@ const RightSidebar = styled.aside`
   border-left: 1px solid ${(p: BaseProps) => p.theme.muted};
 `
 
-const Workspaces = styled.div`
+const TeamsColumn = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   ul {
     display: flex;
@@ -215,7 +215,7 @@ const Workspaces = styled.div`
     }
   }
 `
-const WorkspaceIcon = styled.div`
+const TeamIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
