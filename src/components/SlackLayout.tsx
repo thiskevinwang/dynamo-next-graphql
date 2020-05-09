@@ -4,7 +4,7 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import styled, { BaseProps } from "styled-components"
 
-import { useAuth, useRightPanel } from "hooks"
+import { useAuth, useRightPanel, useTeams } from "hooks"
 import { RightPanel } from "components/RightPanel"
 import { ChannelList } from "components/ChannelList"
 import { LinkActive } from "components/LinkActive"
@@ -17,7 +17,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
   const { token, handleLogout } = useAuth()
   const { username } = useRightPanel()
-
+  const { availableTeams } = useTeams()
   const mainRef = useRef<HTMLElement>(null)
   return (
     <Styles>
@@ -72,21 +72,11 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
         <LeftSidebar>
           <TeamsColumn>
             <ul>
-              <li>
-                <TeamIcon>&nbsp;😀</TeamIcon>
-              </li>
-              <li>
-                <TeamIcon>&nbsp;😊</TeamIcon>
-              </li>
-              <li>
-                <TeamIcon>&nbsp;😇</TeamIcon>
-              </li>
-              <li>
-                <TeamIcon>&nbsp;🤨</TeamIcon>
-              </li>
-              <li>
-                <TeamIcon>&nbsp;🥱</TeamIcon>
-              </li>
+              {availableTeams?.map((teamName) => (
+                <li key={teamName}>
+                  <TeamIcon>{teamName.slice(0, 1).toUpperCase()}</TeamIcon>
+                </li>
+              ))}
             </ul>
           </TeamsColumn>
           <ChannelsContainer>
