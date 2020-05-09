@@ -205,7 +205,9 @@ const TeamsColumn = styled.div`
     }
   }
 `
-const TeamIcon = styled.div`
+
+type TeamIconProps = { isActive?: boolean }
+const TeamIcon = styled.div<TeamIconProps>`
   position: relative;
   display: flex;
   align-items: center;
@@ -238,6 +240,17 @@ const TeamIcon = styled.div`
     border-radius: 5px;
 
     transition: all 100ms ease-in-out;
+
+    ${(p: BaseProps & TeamIconProps) =>
+      p.isActive &&
+      css`
+        border-width: 3px;
+        top: -3px;
+        bottom: -3px;
+        left: -3px;
+        right: -3px;
+        border-color: ${(p: BaseProps) => p.theme.textSecondaryActiveSelected};
+      `};
   }
   :hover:after {
     border-width: 3px;
