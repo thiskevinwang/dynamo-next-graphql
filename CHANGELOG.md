@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [v0.8.0] - DRAFT 1
+
+### Changes
+
+Introducing Teams
+
+- `/[teamId]/[channelId]/user_profile/[userId]`
+
+### Added
+
+- create `TeamsContext` & `useTeams`
+
+### Removed
+
+- "products"
+
 ## [v0.7.2] - 2020-05-09
 
 ### Added
