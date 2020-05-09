@@ -2,7 +2,7 @@ import React, { useRef } from "react"
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
-import styled, { BaseProps } from "styled-components"
+import styled, { css, BaseProps } from "styled-components"
 
 import { useAuth, useRightPanel, useTeams } from "hooks"
 import { RightPanel } from "components/RightPanel"
@@ -15,9 +15,9 @@ interface Props {
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
-  const { token, handleLogout } = useAuth()
-  const { username } = useRightPanel()
-  const { availableTeams } = useTeams()
+  const { token, handleLogout, username } = useAuth()
+  const { username: rightPanelUsername } = useRightPanel()
+  const { teamName, availableTeams, handleSetTeam } = useTeams()
   const mainRef = useRef<HTMLElement>(null)
   return (
     <Styles>
@@ -68,71 +68,83 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           )}
         </ul>
       </header>
-      <ContentGrid isRightPanelOpen={!!username}>
+      <ContentGrid isRightPanelOpen={!!rightPanelUsername}>
         <LeftSidebar>
           <TeamsColumn>
             <ul>
-              {availableTeams?.map((teamName) => (
-                <li key={teamName}>
-                  <TeamIcon>{teamName.slice(0, 1).toUpperCase()}</TeamIcon>
-                </li>
-              ))}
+              {availableTeams?.map((_teamName) => {
+                const handleTeamSelect = () => {
+                  router.replace("/")
+                  handleSetTeam(_teamName)
+                }
+                const isActiveTeam = teamName === _teamName
+                return (
+                  <li key={_teamName} onClick={handleTeamSelect}>
+                    <TeamIcon isActive={isActiveTeam}>
+                      {_teamName.slice(0, 1).toUpperCase()}
+                    </TeamIcon>
+                  </li>
+                )
+              })}
             </ul>
           </TeamsColumn>
           <ChannelsContainer>
-            <SidebarTop></SidebarTop>
+            <LeftSidebarTop>
+              <h3>{teamName}</h3>
+              <p>{username}</p>
+            </LeftSidebarTop>
             <Lists>
               <NavList>
                 <ul>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/all_unreads"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/all_unreads`}
                   >
                     All Unreads
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/threads"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/threads`}
                   >
                     Threads
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/mentions_and_reactions"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/mentions_and_reactions`}
                   >
                     Mentions & reactions
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/drafts"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/drafts`}
                   >
                     Drafts
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/saved_items"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/saved_items`}
                   >
                     Saved items
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/people"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/people`}
                   >
                     People
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/apps"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/apps`}
                   >
                     Apps
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/files"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/files`}
                   >
                     Files
                   </LinkActive>
-                  <LinkActive href={"/"} as={"/"}>
+                  <LinkActive href={`/`} as={`/`}>
                     Show less
                   </LinkActive>
                 </ul>
@@ -263,7 +275,19 @@ const TeamIcon = styled.div<TeamIconProps>`
 const ChannelsContainer = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
 `
-const SidebarTop = styled.div`
+const LeftSidebarTop = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 1rem;
+  h3 {
+    margin: 0;
+  }
+  p {
+    margin: 0;
+    font-size: 12px;
+  }
+
   background: ${(p: BaseProps) => p.theme.backgroundSidebar};
   border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   height: 64px;
