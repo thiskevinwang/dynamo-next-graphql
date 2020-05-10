@@ -89,7 +89,7 @@ export const backgroundSidebarActive = theme("mode", {
   [Mode.AUBERGINE]: "#1164A3",
   [Mode.AUBERGINE_DARK]: "#1164A3",
   [Mode.OCHIN]: "#6698C8",
-  [Mode.OCHIN_DARK]: "537AA6",
+  [Mode.OCHIN_DARK]: "#537AA6",
   [Mode.MOOD_INDIGO]: "#001A5E",
   [Mode.MOOD_INDIGO_DARK]: "#1F2A42",
 })
