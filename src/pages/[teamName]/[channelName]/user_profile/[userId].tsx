@@ -5,7 +5,7 @@ import { GraphQLClient } from "graphql-request"
 import styled, { BaseProps } from "styled-components"
 
 import { SlackLayout } from "components/SlackLayout"
-import { useAuth, useRightPanel } from "hooks"
+import { useAuth, useRightPanel, useTeams } from "hooks"
 
 const ENDPOINT = process.env.ENDPOINT as string
 const client = new GraphQLClient(ENDPOINT)
@@ -33,10 +33,10 @@ query GetUser($username: String!, $email: String!) {
 }
 `
 
-const QUERY_MESSAGES_BY_CHANNEL_QUERY = `
+const QUERY_MESSAGES_QUERY = `
 ${ROW_FRAGMENT}
-query QueryChannelAndMessages($channelName: String!) {
-  queryMessagesByChannel(channelName: $channelName) {
+query QueryMessages($teamName: String!, $channelName: String!) {
+  queryMessages(teamName: $teamName, channelName: $channelName) {
     ...Row
     body
     username
@@ -47,11 +47,17 @@ query QueryChannelAndMessages($channelName: String!) {
 const CREATE_MESSAGE_MUTATION = `
 ${ROW_FRAGMENT}
 mutation CreateMessage(
+  $teamName: String!
   $channelName: String!
   $username: String!
   $body: String!
 ) {
-  createMessage(channelName: $channelName, username: $username, body: $body) {
+  createMessage(
+    teamName: $teamName
+    channelName: $channelName
+    username: $username
+    body: $body
+  ) {
     ...Row
     body
   }
@@ -75,6 +81,8 @@ interface Message {
   createdAt: string
   updatedAt?: string
   body: string
+  teamName: string
+  channelName: string
   username: string
 }
 const Sticky = styled.div`
@@ -160,15 +168,25 @@ const SmallDate = styled.small`
 
 let initialDate = ``
 
-export default (({ channelName, queryMessagesByChannel: messages }) => {
+const Channel: NextPage<SSRProps> = ({
+  channelName,
+  queryMessages: messages,
+  /**
+   * @todo teamName and userId aren't used yet.
+   */
+  // teamName,
+  // userId,
+}) => {
   const { username, token } = useAuth()
   const [body, setBody] = useState("")
+  const { teamName } = useTeams()
 
   client.setHeader("Authorization", `Bearer ${token}`)
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     client
       .request(CREATE_MESSAGE_MUTATION, {
+        teamName,
         channelName,
         username,
         body,
@@ -180,9 +198,9 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
   }
 
   const { data, revalidate } = useSwr<QueryChannelAndMessagesResponse>(
-    [QUERY_MESSAGES_BY_CHANNEL_QUERY, channelName],
-    (query, cn) => {
-      return client.request(query, { channelName: cn })
+    [QUERY_MESSAGES_QUERY, teamName, channelName],
+    (query, tn, cn) => {
+      return client.request(query, { teamName: tn, channelName: cn })
     }
   )
 
@@ -192,7 +210,7 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
    */
   const [users, dispatch] = useReducer(usersReducer, {})
   useEffect(() => {
-    ;(data?.queryMessagesByChannel ?? messages)
+    ;(data?.queryMessages ?? messages)
       .reduce((prev, curr) => {
         if (!prev.includes(curr.username)) {
           prev.push(curr.username)
@@ -213,14 +231,14 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
             })
           })
       )
-  }, [data?.queryMessagesByChannel, messages])
+  }, [data?.queryMessages, messages])
 
   const { handleSet } = useRightPanel()
 
   /**
    * to help generate parent <div>s for sticky date
    */
-  const grouped = (data?.queryMessagesByChannel ?? messages)
+  const grouped = (data?.queryMessages ?? messages)
     .sort(
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -302,30 +320,37 @@ export default (({ channelName, queryMessagesByChannel: messages }) => {
       )}
     </SlackLayout>
   )
-}) as NextPage<SSRProps>
+}
+
+export default Channel
 
 interface QueryChannelAndMessagesResponse {
-  queryMessagesByChannel: Message[]
+  queryMessages: Message[]
 }
 interface SSRProps extends QueryChannelAndMessagesResponse {
+  teamName?: string
   channelName?: string
+  userId?: string
 }
 
 export const getServerSideProps: GetServerSideProps<SSRProps> = async ({
   query,
 }) => {
-  const { channelName } = query
+  const { teamName, channelName, userId } = query
 
-  const { queryMessagesByChannel } = await client.request<
+  const { queryMessages } = await client.request<
     QueryChannelAndMessagesResponse
-  >(QUERY_MESSAGES_BY_CHANNEL_QUERY, {
+  >(QUERY_MESSAGES_QUERY, {
+    teamName,
     channelName,
   })
 
   return {
     props: {
+      teamName: Array.isArray(teamName) ? teamName[0] : teamName,
       channelName: Array.isArray(channelName) ? channelName[0] : channelName,
-      queryMessagesByChannel,
+      userId: Array.isArray(userId) ? userId[0] : userId,
+      queryMessages,
     },
   }
 }

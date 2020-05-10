@@ -2,9 +2,9 @@ import React, { useRef } from "react"
 import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
-import styled, { BaseProps } from "styled-components"
+import styled, { css, BaseProps } from "styled-components"
 
-import { useAuth, useRightPanel } from "hooks"
+import { useAuth, useRightPanel, useTeams } from "hooks"
 import { RightPanel } from "components/RightPanel"
 import { ChannelList } from "components/ChannelList"
 import { LinkActive } from "components/LinkActive"
@@ -15,9 +15,9 @@ interface Props {
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
-  const { token, handleLogout } = useAuth()
-  const { username } = useRightPanel()
-
+  const { token, handleLogout, username } = useAuth()
+  const { username: rightPanelUsername } = useRightPanel()
+  const { teamName, availableTeams, handleSetTeam } = useTeams()
   const mainRef = useRef<HTMLElement>(null)
   return (
     <Styles>
@@ -68,81 +68,83 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           )}
         </ul>
       </header>
-      <ContentGrid isRightPanelOpen={!!username}>
+      <ContentGrid isRightPanelOpen={!!rightPanelUsername}>
         <LeftSidebar>
-          <Workspaces>
+          <TeamsColumn>
             <ul>
-              <li>
-                <WorkspaceIcon>&nbsp;😀</WorkspaceIcon>
-              </li>
-              <li>
-                <WorkspaceIcon>&nbsp;😊</WorkspaceIcon>
-              </li>
-              <li>
-                <WorkspaceIcon>&nbsp;😇</WorkspaceIcon>
-              </li>
-              <li>
-                <WorkspaceIcon>&nbsp;🤨</WorkspaceIcon>
-              </li>
-              <li>
-                <WorkspaceIcon>&nbsp;🥱</WorkspaceIcon>
-              </li>
+              {availableTeams?.map((_teamName) => {
+                const handleTeamSelect = () => {
+                  router.replace("/")
+                  handleSetTeam(_teamName)
+                }
+                const isActiveTeam = teamName === _teamName
+                return (
+                  <li key={_teamName} onClick={handleTeamSelect}>
+                    <TeamIcon isActive={isActiveTeam}>
+                      {_teamName.slice(0, 1).toUpperCase()}
+                    </TeamIcon>
+                  </li>
+                )
+              })}
             </ul>
-          </Workspaces>
+          </TeamsColumn>
           <ChannelsContainer>
-            <SidebarTop></SidebarTop>
+            <LeftSidebarTop>
+              <h3>{teamName}</h3>
+              <p>{username}</p>
+            </LeftSidebarTop>
             <Lists>
               <NavList>
                 <ul>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/all_unreads"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/all_unreads`}
                   >
                     All Unreads
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/threads"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/threads`}
                   >
                     Threads
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/mentions_and_reactions"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/mentions_and_reactions`}
                   >
                     Mentions & reactions
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/drafts"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/drafts`}
                   >
                     Drafts
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/saved_items"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/saved_items`}
                   >
                     Saved items
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/people"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/people`}
                   >
                     People
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/apps"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/apps`}
                   >
                     Apps
                   </LinkActive>
                   <LinkActive
-                    href={"/channels/[channelName]"}
-                    as={"/channels/files"}
+                    href={`/[teamName]/channels/[channelName]`}
+                    as={`/${teamName}/channels/files`}
                   >
                     Files
                   </LinkActive>
-                  <LinkActive href={"/"} as={"/"}>
+                  <LinkActive href={`/`} as={`/`}>
                     Show less
                   </LinkActive>
                 </ul>
@@ -201,7 +203,7 @@ const RightSidebar = styled.aside`
   border-left: 1px solid ${(p: BaseProps) => p.theme.muted};
 `
 
-const Workspaces = styled.div`
+const TeamsColumn = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   ul {
     display: flex;
@@ -215,21 +217,88 @@ const Workspaces = styled.div`
     }
   }
 `
-const WorkspaceIcon = styled.div`
+
+type TeamIconProps = { isActive?: boolean }
+const TeamIcon = styled.div<TeamIconProps>`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 0.6;
+  font-weight: 700;
   width: 30px;
   height: 30px;
-  border: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
-  border-radius: 5px;
+  user-select: none;
+  cursor: pointer;
+
+  /**
+   * border that doesn't affect width:
+   * - use outline or psuedo-element
+   * @see https://stackoverflow.com/a/11426967/9823455
+   */
+  :after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+
+    border-color: ${(p: BaseProps) => p.theme.borderSidebar};
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+
+    transition: all 100ms ease-in-out;
+
+    ${(p: BaseProps & TeamIconProps) =>
+      p.isActive &&
+      css`
+        border-width: 3px;
+        top: -3px;
+        bottom: -3px;
+        left: -3px;
+        right: -3px;
+        border-color: ${(p: BaseProps) => p.theme.textSecondaryActiveSelected};
+      `};
+  }
+  :hover:after {
+    border-width: 3px;
+    top: -3px;
+    bottom: -3px;
+    left: -3px;
+    right: -3px;
+  }
 `
 const ChannelsContainer = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
 `
-const SidebarTop = styled.div`
+const LeftSidebarTop = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 1rem;
+  h3 {
+    margin: 0;
+  }
+  p {
+    margin: 0;
+    font-size: 13px;
+
+    /* TODO placeholder status-dot */
+    :before {
+      content: "";
+      display: inline-block;
+      margin: 0 4px 0 -1px;
+      border-radius: 100%;
+      width: 9px;
+      height: 9px;
+      background: ${(p: BaseProps) => p.theme.statusActive};
+    }
+  }
+
   background: ${(p: BaseProps) => p.theme.backgroundSidebar};
   border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   height: 64px;
