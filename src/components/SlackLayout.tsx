@@ -285,7 +285,18 @@ const LeftSidebarTop = styled.div`
   }
   p {
     margin: 0;
-    font-size: 12px;
+    font-size: 13px;
+
+    /* TODO placeholder status-dot */
+    :before {
+      content: "";
+      display: inline-block;
+      margin: 0 4px 0 -1px;
+      border-radius: 100%;
+      width: 9px;
+      height: 9px;
+      background: ${(p: BaseProps) => p.theme.statusActive};
+    }
   }
 
   background: ${(p: BaseProps) => p.theme.backgroundSidebar};
