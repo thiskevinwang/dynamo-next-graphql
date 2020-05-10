@@ -4,21 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [v0.8.0] - DRAFT 1
+## [v0.8.0] - 2020-05-09
 
 ### Changes
 
-Introducing Teams
+- Introducing Teams
+- Mimic Slack's web client path params
 
-- `/[teamId]/[channelId]/user_profile/[userId]`
+  - `/[teamId]/[channelId]/user_profile/[userId]`
+
+![image](https://user-images.githubusercontent.com/26389321/81488534-0224a000-9238-11ea-8d6a-a984d748437b.png)
 
 ### Added
 
 - create `TeamsContext` & `useTeams`
+  - query for teams in TeamContext provider
+- `statusActive` theme
+  - for the little colored status dot
 
 ### Removed
 
 - "products"
+
+### Changelog
+
+https://github.com/thiskevinwang/dynamo-next-graphql/compare/v0.7.2...v0.8.0
 
 ## [v0.7.2] - 2020-05-09
 
