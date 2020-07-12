@@ -101,6 +101,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
 const LeftSidebar = styled.div`
   background: ${(p: BaseProps) => p.theme.backgroundSidebar};
   color: ${(p: BaseProps) => p.theme.textSecondary};
+  transition: background 100ms ease-in-out, color 100ms ease-in-out;
   a {
     /* color: ${(p: BaseProps) => p.theme.textSecondary}; */
   }
@@ -124,6 +125,7 @@ const LeftSidebar = styled.div`
 
 const TeamsColumn = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: border-right 100ms ease-in-out;
   ul {
     display: flex;
     flex-direction: column;
@@ -193,6 +195,7 @@ const TeamIcon = styled.div<TeamIconProps>`
 `
 const ChannelsContainer = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: border-right 100ms ease-in-out;
 `
 const LeftSidebarTop = styled.div`
   display: flex;
@@ -215,15 +218,18 @@ const LeftSidebarTop = styled.div`
       width: 9px;
       height: 9px;
       background: ${(p: BaseProps) => p.theme.statusActive};
+      transition: background 100ms ease-in-out;
     }
   }
 
   background: ${(p: BaseProps) => p.theme.backgroundSidebar};
   border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: background 100ms ease-in-out, border-bottom 100ms ease-in-out;
   height: 64px;
 `
 const NavList = styled.div`
   border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: border-bottom 100ms ease-in-out;
   padding-top: 10px;
   padding-bottom: 10px;
 
@@ -252,15 +258,17 @@ const Styles = styled.div`
   .header {
     /* theme */
     background: ${(p: BaseProps) => p.theme.topNav};
+    border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+    transition: background 100ms ease-in-out, border-bottom 100ms ease-in-out;
+
     a {
       color: ${(p: BaseProps) => p.theme.textSecondary};
+      transition: color 100ms ease-in-out;
     }
     /* theme */
-
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
   }
 `
 
@@ -330,6 +338,7 @@ const Content = styled.div`
     display: flex;
     height: 64px;
     border-bottom: 1px solid ${(p: BaseProps) => p.theme.muted};
+    transition: border-bottom 100ms ease-in-out;
     overflow: hidden;
 
     div {
