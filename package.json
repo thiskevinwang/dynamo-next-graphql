@@ -18,7 +18,7 @@
     "lint-staged": "lint-staged",
     "dev-api": "ts-node-dev --no-notify --respawn --transpileOnly ./",
     "test": "jest --config jestconfig.json",
-    "format": "prettier --write src/**/*.ts"
+    "format": "prettier --write src/**/*.{ts,tsx}"
   },
   "dependencies": {
     "@material-ui/core": "^4.9.12",
