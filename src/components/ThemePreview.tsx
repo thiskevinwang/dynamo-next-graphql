@@ -1,4 +1,4 @@
-import styled, { ThemeProvider, BaseProps } from "styled-components"
+import styled, { ThemeProvider, BaseProps, css } from "styled-components"
 
 import { theme, Mode } from "theme"
 import { useColorScheme } from "hooks"
@@ -12,6 +12,22 @@ const Presenter = styled.div`
 interface BoxProps {
   active: boolean
 }
+
+const SharedPStyle = css`
+  position: relative;
+  display: flex;
+  align-items: center;
+`
+
+const SimulatedTextBlock = css`
+  position: absolute;
+  width: 70%;
+  border-radius: 5px;
+  left: 5px;
+  content: "";
+  height: 1rem;
+`
+
 const Box = styled.div`
   outline-width: ${(p: BaseProps & BoxProps) => p.active && `3px`};
   outline-style: ${(p: BaseProps & BoxProps) => p.active && `solid`};
@@ -38,38 +54,62 @@ const Box = styled.div`
 
   p {
     margin: 0;
-    margin-bottom: 0.5rem;
-    height: 1rem;
-    border-radius: 5px;
-    width: 75%;
+    height: 1.5rem;
 
     &.text {
-      color: ${(p: BaseProps) => p.theme.text};
-      background: ${(p: BaseProps) => p.theme.text};
+      ${SharedPStyle}
+      :after {
+        ${SimulatedTextBlock};
+        background: ${(p: BaseProps) => p.theme.text};
+      }
     }
     &.textTime {
-      color: ${(p: BaseProps) => p.theme.textTime};
-      background: ${(p: BaseProps) => p.theme.textTime};
+      ${SharedPStyle}
+      :after {
+        ${SimulatedTextBlock};
+        background: ${(p: BaseProps) => p.theme.textTime};
+      }
     }
     &.textEdited {
-      color: ${(p: BaseProps) => p.theme.textEdited};
-      background: ${(p: BaseProps) => p.theme.textEdited};
+      background: ${(p: BaseProps) => p.theme.backgroundHover};
+      ${SharedPStyle}
+      :after {
+        ${SimulatedTextBlock};
+        background: ${(p: BaseProps) => p.theme.textEdited};
+      }
     }
     &.textSecondary {
-      color: ${(p: BaseProps) => p.theme.textSecondary};
-      background: ${(p: BaseProps) => p.theme.textSecondary};
+      ${SharedPStyle}
+      :after {
+        ${SimulatedTextBlock};
+        background: ${(p: BaseProps) => p.theme.textSecondary};
+      }
     }
     &.textSecondaryActive {
-      color: ${(p: BaseProps) => p.theme.textSecondaryActive};
-      background: ${(p: BaseProps) => p.theme.textSecondaryActive};
+      background: ${(p: BaseProps) => p.theme.backgroundSidebarHover};
+      ${SharedPStyle}
+      :after {
+        ${SimulatedTextBlock};
+        background: ${(p: BaseProps) => p.theme.textSecondaryActiveSelected};
+      }
     }
     &.textSecondaryActiveSelected {
-      color: ${(p: BaseProps) => p.theme.textSecondaryActiveSelected};
-      background: ${(p: BaseProps) => p.theme.textSecondaryActiveSelected};
+      background: ${(p: BaseProps) => p.theme.backgroundSidebarActive};
+
+      ${SharedPStyle}
+      :after {
+        ${SimulatedTextBlock};
+        background: ${(p: BaseProps) => p.theme.textSecondaryActiveSelected};
+      }
     }
     &.muted {
-      color: ${(p: BaseProps) => p.theme.muted};
-      background: ${(p: BaseProps) => p.theme.muted};
+      /* color: ${(p: BaseProps) => p.theme.muted}; */
+      ${SharedPStyle}
+      /* background: ${(p: BaseProps) => p.theme.muted}; */
+      &:after {
+        ${SimulatedTextBlock};
+        background: ${(p: BaseProps) => p.theme.muted};
+      }
     }
   }
   .statusActive {
@@ -87,20 +127,13 @@ const Box = styled.div`
   }
   div {
     &.background {
-      padding: 5pt;
       display: flex;
 
       width: 80%;
-      height: 100%;
       background: ${(p: BaseProps) => p.theme.background};
-
-      :hover {
-        background: ${(p: BaseProps) => p.theme.backgroundHover};
-      }
     }
 
     &.backgroundSidebar {
-      padding: 5pt;
       display: flex;
 
       border-right-color: ${(p: BaseProps) => p.theme.borderSidebar};
@@ -108,12 +141,11 @@ const Box = styled.div`
       border-right-width: 1px;
 
       width: 20%;
-      height: 100%;
       background: ${(p: BaseProps) => p.theme.backgroundSidebar};
 
-      :hover {
+      /* :hover {
         background: ${(p: BaseProps) => p.theme.backgroundSidebarHover};
-      }
+      } */
     }
   }
 `
