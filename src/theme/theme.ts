@@ -26,6 +26,14 @@ export const textEdited = theme("mode", {
   [Mode.MOOD_INDIGO]: "#868686",
   [Mode.MOOD_INDIGO_DARK]: "#818385",
 })
+export const textSecondary = theme("mode", {
+  [Mode.AUBERGINE]: "#CFC3CF",
+  [Mode.AUBERGINE_DARK]: "#A3A3A6",
+  [Mode.OCHIN]: "#CBCFD3",
+  [Mode.OCHIN_DARK]: "#C7C8CA",
+  [Mode.MOOD_INDIGO]: "#3E5285",
+  [Mode.MOOD_INDIGO_DARK]: "#A9ACB6",
+})
 export const textSecondaryActive = theme("mode", {
   [Mode.AUBERGINE]: "#FFFFFF",
   [Mode.AUBERGINE_DARK]: "#D1D2D3",
@@ -41,14 +49,6 @@ export const textSecondaryActiveSelected = theme("mode", {
   [Mode.OCHIN_DARK]: "#FFFFFF",
   [Mode.MOOD_INDIGO]: "#F8F8FA",
   [Mode.MOOD_INDIGO_DARK]: "#D8DCE8",
-})
-export const textSecondary = theme("mode", {
-  [Mode.AUBERGINE]: "#CFC3CF",
-  [Mode.AUBERGINE_DARK]: "#A3A3A6",
-  [Mode.OCHIN]: "#CBCFD3",
-  [Mode.OCHIN_DARK]: "#C7C8CA",
-  [Mode.MOOD_INDIGO]: "#3E5285",
-  [Mode.MOOD_INDIGO_DARK]: "#A9ACB6",
 })
 /** select right under middle top bar */
 export const background = theme("mode", {
