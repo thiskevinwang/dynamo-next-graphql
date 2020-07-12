@@ -1,11 +1,9 @@
 import React, { useRef } from "react"
-import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import styled, { css, BaseProps } from "styled-components"
 
-import { useAuth, useRightPanel, useTeams } from "hooks"
-import { RightPanel } from "components/RightPanel"
+import { useRightPanel, useTeams } from "hooks"
 import { ChannelList } from "components/ChannelList"
 import { LinkActive } from "components/LinkActive"
 import { LayoutContextProvider } from "context"
@@ -15,7 +13,6 @@ interface Props {
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
-  const { token, handleLogout, username } = useAuth()
   const { username: rightPanelUsername } = useRightPanel()
   const { teamName, availableTeams, handleSetTeam } = useTeams()
   const mainRef = useRef<HTMLElement>(null)
@@ -45,7 +42,6 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           <ChannelsContainer>
             <LeftSidebarTop>
               <h3>{teamName}</h3>
-              <p>{username}</p>
             </LeftSidebarTop>
             <Lists>
               <NavList>
@@ -122,10 +118,6 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             <main ref={mainRef}>{children}</main>
           </LayoutContextProvider>
         </Content>
-
-        <RightSidebar>
-          <RightPanel />
-        </RightSidebar>
       </ContentGrid>
     </Styles>
   )
@@ -152,9 +144,6 @@ const LeftSidebar = styled.div`
   @media (min-width: 1920px) {
     grid-template-columns: 50px auto;
   }
-`
-const RightSidebar = styled.aside`
-  border-left: 1px solid ${(p: BaseProps) => p.theme.muted};
 `
 
 const TeamsColumn = styled.div`

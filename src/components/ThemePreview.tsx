@@ -15,7 +15,7 @@ interface BoxProps {
 const Box = styled.div`
   outline-width: ${(p: BaseProps & BoxProps) => p.active && `3px`};
   outline-style: ${(p: BaseProps & BoxProps) => p.active && `solid`};
-  outline-color: ${(p: BaseProps & BoxProps) => p.active && p.theme.muted};
+  outline-color: ${(p: BaseProps & BoxProps) => p.active && `lightblue`};
 
   box-shadow: 0 1px 0 ${(p: BaseProps) => p.theme.backgroundHover};
   display: flex;
