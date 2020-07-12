@@ -46,52 +46,28 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             <Lists>
               <NavList>
                 <ul>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/all_unreads`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     All Unreads
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/threads`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     Threads
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/mentions_and_reactions`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     Mentions & reactions
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/drafts`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     Drafts
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/saved_items`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     Saved items
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/people`}
-                  >
+                  <LinkActive href={``} as={``}>
                     People
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/apps`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     Apps
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/files`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     Files
                   </LinkActive>
                   <LinkActive href={`/`} as={`/`}>
