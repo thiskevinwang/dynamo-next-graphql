@@ -118,16 +118,27 @@ export const getStaticProps: GetStaticProps<
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const teamNames = ["Rust", "TypeScript", "GraphQL", "Kotlin"]
+  const channelNames = [
+    "all_unreads",
+    "threads",
+    "mentions_and_reactions",
+    "drafts",
+    "saved_items",
+    "people",
+    "apps",
+    "files",
+  ]
+
+  let paths: { params: { teamName: string; channelName: string } }[] = []
+  teamNames.forEach((teamName) => {
+    channelNames.forEach((channelName) => {
+      paths.push({ params: { teamName, channelName } })
+    })
+  })
   return {
-    paths: [
-      {
-        params: {
-          teamName: "test_teamname",
-          channelName: "test_channelName",
-        },
-      }, // See the "paths" section below
-    ],
-    fallback: true || false, // See the "fallback" section below
+    paths,
+    fallback: false, // See the "fallback" section below
   }
 }
 
