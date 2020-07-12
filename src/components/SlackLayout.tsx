@@ -21,53 +21,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const mainRef = useRef<HTMLElement>(null)
   return (
     <Styles>
-      <header className="header">
-        <ul>
-          <li>
-            <button onClick={router.back}>←</button>
-          </li>
-          <li>
-            <button disabled>→</button>
-          </li>
-          <li>
-            <Link href={"/"}>
-              <a>Home</a>
-            </Link>
-          </li>
-          {/*<li>
-            <Link href={"/create"}>
-              <a>Create</a>
-            </Link>
-          </li>*/}
-          {!token ? (
-            <>
-              <li>
-                <Link href={"/auth/signup"}>
-                  <a>Signup</a>
-                </Link>
-              </li>
-              <li>
-                <Link href={"/auth/login"}>
-                  <a>Login</a>
-                </Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Link href={"/profile"}>
-                  <a>Profile</a>
-                </Link>
-              </li>
-              <li>
-                <Link href={"/auth/logout"}>
-                  <a onClick={handleLogout}>Logout</a>
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-      </header>
+      <header className="header"></header>
       <ContentGrid isRightPanelOpen={!!rightPanelUsername}>
         <LeftSidebar>
           <TeamsColumn>
@@ -342,17 +296,6 @@ const Styles = styled.div`
     justify-content: center;
     align-items: center;
     border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
-
-    ul {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-      li {
-        margin-left: 1rem;
-        /* margin-right: 1rem; */
-        float: left;
-      }
-    }
   }
 `
 
