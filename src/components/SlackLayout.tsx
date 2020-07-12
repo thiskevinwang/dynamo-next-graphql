@@ -46,31 +46,31 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             <Lists>
               <NavList>
                 <ul>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     All Unreads
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Threads
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Mentions & reactions
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Drafts
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Saved items
                   </LinkActive>
                   <LinkActive href={``} as={``}>
                     People
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Apps
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Files
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Show less
                   </LinkActive>
                 </ul>
