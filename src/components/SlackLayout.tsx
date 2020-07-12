@@ -46,7 +46,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             <Lists>
               <NavList>
                 <ul>
-                  <LinkActive href={``} as={``}>
+                  <LinkActive href={`/`} as={`/`}>
                     All Unreads
                   </LinkActive>
                   <LinkActive href={``} as={``}>
