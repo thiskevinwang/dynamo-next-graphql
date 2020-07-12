@@ -17,6 +17,7 @@ const Box = styled.div`
   outline-style: ${(p: BaseProps & BoxProps) => p.active && `solid`};
   outline-color: ${(p: BaseProps & BoxProps) => p.active && `lightblue`};
 
+  cursor: pointer;
   box-shadow: 0 1px 0 ${(p: BaseProps) => p.theme.backgroundHover};
   display: flex;
   flex-direction: column;
