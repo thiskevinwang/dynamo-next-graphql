@@ -37,7 +37,7 @@ const rightPanelReducer = (
 ) => {
   switch (action.type) {
     case RightPanelActionTypeEnum.SET:
-      return { username: action.username }
+      return { username: action?.username }
     case RightPanelActionTypeEnum.CLEAR:
       return { username: undefined }
     default:

@@ -12,6 +12,8 @@ const ActiveLi = styled.li<LinkLiProps>`
     p.isActive ? p.theme.textSecondaryActiveSelected : p.theme.textSecondary};
   background: ${(p: BaseProps & LinkLiProps) =>
     p.isActive ? p.theme.backgroundSidebarActive : p.theme.backgroundSidebar};
+  transition: background 100ms ease-in-out, color 100ms ease-in-out;
+
   :hover {
     background: ${(p: BaseProps & LinkLiProps) =>
       p.isActive
