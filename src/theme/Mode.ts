@@ -5,5 +5,4 @@ export enum Mode {
   MOOD_INDIGO_DARK = "MOOD_INDIGO_DARK",
   OCHIN = "OCHIN",
   OCHIN_DARK = "OCHIN_DARK",
-  BLANK = "BLANK",
 }

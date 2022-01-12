@@ -1,11 +1,9 @@
 import React, { useRef } from "react"
-import Link from "next/link"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import styled, { css, BaseProps } from "styled-components"
 
-import { useAuth, useRightPanel, useTeams } from "hooks"
-import { RightPanel } from "components/RightPanel"
+import { useRightPanel, useTeams } from "hooks"
 import { ChannelList } from "components/ChannelList"
 import { LinkActive } from "components/LinkActive"
 import { LayoutContextProvider } from "context"
@@ -15,59 +13,12 @@ interface Props {
 }
 export const SlackLayout: React.FC<Props> = ({ title, children }) => {
   const router = useRouter()
-  const { token, handleLogout, username } = useAuth()
   const { username: rightPanelUsername } = useRightPanel()
   const { teamName, availableTeams, handleSetTeam } = useTeams()
   const mainRef = useRef<HTMLElement>(null)
   return (
     <Styles>
-      <header className="header">
-        <ul>
-          <li>
-            <button onClick={router.back}>←</button>
-          </li>
-          <li>
-            <button disabled>→</button>
-          </li>
-          <li>
-            <Link href={"/"}>
-              <a>Home</a>
-            </Link>
-          </li>
-          {/*<li>
-            <Link href={"/create"}>
-              <a>Create</a>
-            </Link>
-          </li>*/}
-          {!token ? (
-            <>
-              <li>
-                <Link href={"/auth/signup"}>
-                  <a>Signup</a>
-                </Link>
-              </li>
-              <li>
-                <Link href={"/auth/login"}>
-                  <a>Login</a>
-                </Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Link href={"/profile"}>
-                  <a>Profile</a>
-                </Link>
-              </li>
-              <li>
-                <Link href={"/auth/logout"}>
-                  <a onClick={handleLogout}>Logout</a>
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-      </header>
+      <header className="header"></header>
       <ContentGrid isRightPanelOpen={!!rightPanelUsername}>
         <LeftSidebar>
           <TeamsColumn>
@@ -91,60 +42,35 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
           <ChannelsContainer>
             <LeftSidebarTop>
               <h3>{teamName}</h3>
-              <p>{username}</p>
             </LeftSidebarTop>
             <Lists>
               <NavList>
                 <ul>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/all_unreads`}
-                  >
+                  <LinkActive href={`/`} as={`/`}>
                     All Unreads
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/threads`}
-                  >
+                  <LinkActive href={``} as={``}>
                     Threads
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/mentions_and_reactions`}
-                  >
+                  <LinkActive href={``} as={``}>
                     Mentions & reactions
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/drafts`}
-                  >
+                  <LinkActive href={``} as={``}>
                     Drafts
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/saved_items`}
-                  >
+                  <LinkActive href={``} as={``}>
                     Saved items
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/people`}
-                  >
+                  <LinkActive href={``} as={``}>
                     People
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/apps`}
-                  >
+                  <LinkActive href={``} as={``}>
                     Apps
                   </LinkActive>
-                  <LinkActive
-                    href={`/[teamName]/channels/[channelName]`}
-                    as={`/${teamName}/channels/files`}
-                  >
+                  <LinkActive href={``} as={``}>
                     Files
                   </LinkActive>
-                  <LinkActive href={`/`} as={`/`}>
+                  <LinkActive href={``} as={``}>
                     Show less
                   </LinkActive>
                 </ul>
@@ -168,10 +94,6 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
             <main ref={mainRef}>{children}</main>
           </LayoutContextProvider>
         </Content>
-
-        <RightSidebar>
-          <RightPanel />
-        </RightSidebar>
       </ContentGrid>
     </Styles>
   )
@@ -179,6 +101,7 @@ export const SlackLayout: React.FC<Props> = ({ title, children }) => {
 const LeftSidebar = styled.div`
   background: ${(p: BaseProps) => p.theme.backgroundSidebar};
   color: ${(p: BaseProps) => p.theme.textSecondary};
+  transition: background 100ms ease-in-out, color 100ms ease-in-out;
   a {
     /* color: ${(p: BaseProps) => p.theme.textSecondary}; */
   }
@@ -199,12 +122,10 @@ const LeftSidebar = styled.div`
     grid-template-columns: 50px auto;
   }
 `
-const RightSidebar = styled.aside`
-  border-left: 1px solid ${(p: BaseProps) => p.theme.muted};
-`
 
 const TeamsColumn = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: border-right 100ms ease-in-out;
   ul {
     display: flex;
     flex-direction: column;
@@ -274,6 +195,7 @@ const TeamIcon = styled.div<TeamIconProps>`
 `
 const ChannelsContainer = styled.div`
   border-right: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: border-right 100ms ease-in-out;
 `
 const LeftSidebarTop = styled.div`
   display: flex;
@@ -296,15 +218,18 @@ const LeftSidebarTop = styled.div`
       width: 9px;
       height: 9px;
       background: ${(p: BaseProps) => p.theme.statusActive};
+      transition: background 100ms ease-in-out;
     }
   }
 
   background: ${(p: BaseProps) => p.theme.backgroundSidebar};
   border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: background 100ms ease-in-out, border-bottom 100ms ease-in-out;
   height: 64px;
 `
 const NavList = styled.div`
   border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+  transition: border-bottom 100ms ease-in-out;
   padding-top: 10px;
   padding-bottom: 10px;
 
@@ -333,26 +258,17 @@ const Styles = styled.div`
   .header {
     /* theme */
     background: ${(p: BaseProps) => p.theme.topNav};
+    border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
+    transition: background 100ms ease-in-out, border-bottom 100ms ease-in-out;
+
     a {
       color: ${(p: BaseProps) => p.theme.textSecondary};
+      transition: color 100ms ease-in-out;
     }
     /* theme */
-
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid ${(p: BaseProps) => p.theme.borderSidebar};
-
-    ul {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-      li {
-        margin-left: 1rem;
-        /* margin-right: 1rem; */
-        float: left;
-      }
-    }
   }
 `
 
@@ -422,6 +338,7 @@ const Content = styled.div`
     display: flex;
     height: 64px;
     border-bottom: 1px solid ${(p: BaseProps) => p.theme.muted};
+    transition: border-bottom 100ms ease-in-out;
     overflow: hidden;
 
     div {
