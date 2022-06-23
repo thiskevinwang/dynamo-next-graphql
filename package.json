@@ -48,7 +48,7 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.5",
-    "shell-quote": "^1.7.2",
+    "shell-quote": "^1.7.3",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.9.6"
